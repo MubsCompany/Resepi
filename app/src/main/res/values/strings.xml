@@ -10,6 +10,7 @@
     <string name="login">Login</string>
     <string name="ingat_saya">Ingat Saya</string>
     <string name="belum_punya_akun">Belum punya akun?</string>
+    <string name="sudah_punya_akun">Sudah punya akun?</string>
     <string name="login_via_google">Login via Google</string>
     <string name="kembali">Kembali</string>
     <string name="regis">Register</string>

@@ -198,7 +198,7 @@ Column(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.padding(bottom = 10.dp),
     ) {
-        Text(text = stringResource(R.string.belum_punya_akun))
+        Text(text = stringResource(R.string.sudah_punya_akun))
 
         TextButton(
             onClick =
@@ -206,7 +206,7 @@ Column(
 
         }) {
             Text(
-                text = stringResource(R.string.buat_akun),
+                text = stringResource(R.string.login),
                 color = Color(0xFFF57C00)
             )
         }
