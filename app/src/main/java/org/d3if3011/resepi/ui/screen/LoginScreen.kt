@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,18 +47,21 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.navigation.Screen
 import org.d3if3011.resepi.ui.theme.ResepiTheme
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavHostController) {
     Scaffold {paddingValues ->
-        ScreenContent(modifier = Modifier.padding(paddingValues))
+        ScreenContent(modifier = Modifier.padding(paddingValues), navController)
     }
 }
 
 @Composable
-fun ScreenContent(modifier: Modifier) {
+fun ScreenContent(modifier: Modifier, navController: NavHostController) {
     var email by rememberSaveable {
         mutableStateOf("")
     }
@@ -84,14 +92,12 @@ fun ScreenContent(modifier: Modifier) {
     ) {
         Image(painter = painterResource(id = R.drawable.ic_logo_resepi), contentDescription = "logo resepi")
 
-
-
         Column (
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ){
             Text(
-                text = "Login",
+                text = stringResource(id = R.string.login),
                 style = TextStyle(
                     fontSize = 32.sp, // Ukuran font (dalam sp)
                     fontWeight = FontWeight.Normal // Tebal font
@@ -102,33 +108,31 @@ fun ScreenContent(modifier: Modifier) {
                 value = email,
                 onValueChange = { email = it },
                 label = { Text(text = stringResource(R.string.email)) },
-                isError = emailError,
                 trailingIcon = { if (emailError) Icon(imageVector = Icons.Filled.Warning, contentDescription = null) },
-                supportingText = { ErrorHint(emailError) },
+                isError = emailError,
+                supportingText = { ErrorHint(emailError, stringResource(id = R.string.email)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxSize()
+            )
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(text = stringResource(R.string.password)) },
+                isError = passwordError,
+                trailingIcon = { if (passwordError) Icon(imageVector = Icons.Filled.Warning, contentDescription = null) },
+                supportingText = { ErrorHint(passwordError, stringResource(id = R.string.password)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                ),
+                modifier = Modifier.fillMaxSize()
             )
         }
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(text = stringResource(R.string.password)) },
-            isError = passwordError,
-            trailingIcon = { if (passwordError) Icon(imageVector = Icons.Filled.Warning, contentDescription = null) },
-            supportingText = { ErrorHint(passwordError) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Next
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
         Row (
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -140,7 +144,7 @@ fun ScreenContent(modifier: Modifier) {
                     onCheckedChange = { rememberMe = it }, // Tambahkan padding kanan
                 )
                 Text(
-                    text = "Ingat saya",
+                    text = stringResource(id = R.string.ingat_saya),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -148,16 +152,24 @@ fun ScreenContent(modifier: Modifier) {
         }
 
         Button(
-            onClick = { /* Handle login action */ },
+            onClick = {
+                emailError = email.equals("")
+                passwordError = password.equals("")
+                if (emailError || passwordError)return@Button
+                      },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .size(70.dp)
+                .padding(vertical = 8.dp)
+                .shadow(10.dp, shape = RoundedCornerShape(8.dp)),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFF57C00)
             )
         ) {
-            Text(stringResource(R.string.login))
+            Text(stringResource(R.string.login),
+            fontSize = 18.sp
+            )
         }
 
         Row (
@@ -165,7 +177,9 @@ fun ScreenContent(modifier: Modifier) {
         ) {
             Text(text = stringResource(R.string.belum_punya_akun))
 
-            TextButton(onClick = { /*TODO*/ }) {
+            TextButton(onClick = {
+                navController.navigate(Screen.Registrasi.route)
+            }) {
                 Text(
                     text = stringResource(R.string.buat_akun),
                     color = Color(0xFFF57C00)
@@ -173,7 +187,10 @@ fun ScreenContent(modifier: Modifier) {
             }
         }
 
-        Divider()
+        Divider(
+            modifier = Modifier.height(2.dp),
+            color = Color.Gray
+        )
 
         OutlinedButton(
             onClick = { /* Handle login action */ },
@@ -189,24 +206,29 @@ fun ScreenContent(modifier: Modifier) {
                 text = stringResource(R.string.login_via_google),
                 color = Color.Black
             )
+            Icon(
+                imageVector = Icons.Filled.Email,
+                contentDescription = "Google",
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
 
     }
+
 }
 
 
 @Composable
-fun ErrorHint(isError: Boolean) {
+fun ErrorHint(isError: Boolean, unit: String) {
     if (isError) {
-        Text(text = stringResource(R.string.isian_tidak_boleh_kosong))
+        Text(text = stringResource(R.string.isian_tidak_boleh_kosong, unit))
     }
 }
-
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun ScreenPreview() {
     ResepiTheme {
-        LoginScreen()
+        LoginScreen(rememberNavController())
     }
 }
