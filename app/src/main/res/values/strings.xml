@@ -1,13 +1,19 @@
 <resources>
     <string name="app_name">Resepi</string>
     <string name="email">Email</string>
-    <string name="isian_tidak_boleh_kosong">isian tidak boleh kosong</string>
+    <string name="namaLengkap">Nama Lengkap</string>
+    <string name="isian_tidak_boleh_kosong">%1$s tidak boleh kosong</string>
     <string name="password">Password</string>
+    <string name="passwordVer">Konfirmasi Password</string>
     <string name="lupa_password">Lupa Password?</string>
     <string name="buat_akun">Buat akun</string>
     <string name="login">Login</string>
+    <string name="ingat_saya">Ingat Saya</string>
     <string name="belum_punya_akun">Belum punya akun?</string>
+    <string name="sudah_punya_akun">Sudah punya akun?</string>
     <string name="login_via_google">Login via Google</string>
+    <string name="kembali">Kembali</string>
+    <string name="regis">Register</string>
     <string name="ayam">Ayam</string>
     <string name="resep_berbahan_ayam">Resep berbahan ayam</string>
     <string name="ke_resep_ayam">ke resep ayam</string>
