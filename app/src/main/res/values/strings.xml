@@ -8,4 +8,17 @@
     <string name="login">Login</string>
     <string name="belum_punya_akun">Belum punya akun?</string>
     <string name="login_via_google">Login via Google</string>
+    <string name="ayam">Ayam</string>
+    <string name="resep_berbahan_ayam">Resep berbahan ayam</string>
+    <string name="ke_resep_ayam">ke resep ayam</string>
+    <string name="daging">Daging</string>
+    <string name="resep_berbahan_daging">Resep berbahan daging</string>
+    <string name="ikan">Ikan</string>
+    <string name="resep_berbahan_ikan">Resep berbahan ikan</string>
+    <string name="sayuran">Sayuran</string>
+    <string name="resep_berbahan_sayuran">Resep berbahan sayuran</string>
+    <string name="rekomendasi_untuk_kamu">Rekomendasi untuk kamu</string>
+    <string name="lihat_semua">Lihat semua</string>
+    <string name="waktu_memasak">waktu memasak</string>
+    <string name="gambar_makanan">gambar makanan</string>
 </resources>
