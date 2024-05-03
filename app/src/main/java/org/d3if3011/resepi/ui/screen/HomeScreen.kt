@@ -151,7 +151,7 @@ fun HomeScreenContent(modifier: Modifier = Modifier) {
             containerColor = Color(0xFFCFDCFF),
             categoryTitleRes = R.string.ikan,
             categoryTextRes = R.string.resep_berbahan_ikan,
-            iconRes = painterResource(id = R.drawable.ic_brokoli)
+            iconRes = painterResource(id = R.drawable.ic_ikan)
         )
 
         CategoryButton(
