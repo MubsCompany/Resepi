@@ -38,8 +38,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -100,7 +102,7 @@ fun ScreenContent(modifier: Modifier, navController: NavHostController) {
                 text = stringResource(id = R.string.login),
                 style = TextStyle(
                     fontSize = 32.sp, // Ukuran font (dalam sp)
-                    fontWeight = FontWeight.Normal // Tebal font
+                    fontWeight = FontWeight.SemiBold // Tebal font
                 )
             )
 
@@ -161,7 +163,7 @@ fun ScreenContent(modifier: Modifier, navController: NavHostController) {
                 .fillMaxWidth()
                 .size(70.dp)
                 .padding(vertical = 8.dp)
-                .shadow(10.dp, shape = RoundedCornerShape(8.dp)),
+                .shadow(2.dp, shape = RoundedCornerShape(8.dp)),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFF57C00)
@@ -173,7 +175,8 @@ fun ScreenContent(modifier: Modifier, navController: NavHostController) {
         }
 
         Row (
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 10.dp)
         ) {
             Text(text = stringResource(R.string.belum_punya_akun))
 
@@ -188,7 +191,7 @@ fun ScreenContent(modifier: Modifier, navController: NavHostController) {
         }
 
         Divider(
-            modifier = Modifier.height(2.dp),
+            modifier = Modifier.height(1.5.dp),
             color = Color.Gray
         )
 
@@ -196,20 +199,21 @@ fun ScreenContent(modifier: Modifier, navController: NavHostController) {
             onClick = { /* Handle login action */ },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(vertical = 24.dp)
+                .shadow(1.dp, shape = RoundedCornerShape(8.dp)),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White
             )
         ) {
+            Image(
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp).size(22.dp),
+                painter = painterResource(id = R.drawable.ic_google),
+                contentDescription = null,
+            )
             Text(
                 text = stringResource(R.string.login_via_google),
                 color = Color.Black
-            )
-            Icon(
-                imageVector = Icons.Filled.Email,
-                contentDescription = "Google",
-                tint = MaterialTheme.colorScheme.primary
             )
         }
 

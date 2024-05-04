@@ -1,6 +1,7 @@
 package org.d3if3011.resepi.ui.screen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -183,7 +185,7 @@ Column(
             .fillMaxWidth()
             .size(70.dp)
             .padding(vertical = 8.dp)
-            .shadow(10.dp, shape = RoundedCornerShape(8.dp)),
+            .shadow(2.dp, shape = RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFFF57C00)
@@ -212,27 +214,29 @@ Column(
         }
     }
     Divider(
-        modifier = Modifier.height(2.dp),
-        color = Color.Gray
+        modifier = Modifier.height(1.5.dp),
+        color = Color.LightGray
         )
     OutlinedButton(
         onClick = { /* Handle login action */ },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 24.dp),
+            .padding(vertical = 24.dp)
+            .shadow(1.dp, shape = RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White
         )
     ) {
+        Image(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp).size(22.dp),
+            painter = painterResource(id = R.drawable.ic_google),
+            contentDescription = null,
+        )
         Text(
             text = stringResource(R.string.login_via_google),
-            color = Color.Black
-        )
-        Icon(
-            imageVector = Icons.Filled.Email,
-            contentDescription = "Google",
-            tint = MaterialTheme.colorScheme.primary
+            color = Color.Black,
+            fontSize = 18.sp
         )
     }
 }
