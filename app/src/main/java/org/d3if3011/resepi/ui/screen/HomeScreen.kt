@@ -50,13 +50,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.navigation.Screen
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(navController: NavHostController) {
     Scaffold (
         topBar = {
-            HomeTopBar()
+            HomeTopBar(navController)
         }
     ) {paddingValues ->
         HomeScreenContent(modifier = Modifier.padding(paddingValues))
@@ -65,11 +68,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar () {
+fun HomeTopBar (navController: NavHostController) {
     var searchText by remember {
         mutableStateOf("")
     }
-
     TopAppBar(
         title = { Text("") },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -83,7 +85,8 @@ fun HomeTopBar () {
             ) {
 
                     OutlinedTextField(
-                        modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
                             .border(
                                 BorderStroke(
                                     0.1.dp,
@@ -96,7 +99,7 @@ fun HomeTopBar () {
                         onValueChange = { searchText = it },
                         placeholder = { Text("cari resep kamu", color = Color.DarkGray) },
                         leadingIcon = {
-                            IconButton(onClick = { }) {
+                            IconButton(onClick = { navController.navigate(Screen.SearchPage.route) }) {
                                 Icon(
                                     imageVector = Icons.Default.Search,
                                     contentDescription = null,
@@ -111,7 +114,7 @@ fun HomeTopBar () {
 
 
                 Spacer(modifier = Modifier.width(8.dp))
-                IconButton(onClick = { /* Handle profile click */ }) {
+                IconButton(onClick = { navController.navigate(Screen.ProfilePage.route) }) {
                     Icon(imageVector = Icons.Filled.Person, contentDescription = "Profile")
                 }
             }
@@ -319,6 +322,6 @@ fun ResepListItemPreview() {
 @Preview
 @Composable
 fun HomeScreenPreview () {
-    HomeScreen(Modifier.fillMaxSize())
+    HomeScreen(rememberNavController())
 }
 

@@ -27,4 +27,10 @@
     <string name="lihat_semua">Lihat semua</string>
     <string name="waktu_memasak">waktu memasak</string>
     <string name="gambar_makanan">gambar makanan</string>
+    <string name="profile_text">Informasi Akun</string>
+    <string name="search_text">Pencarian</string>
+    <string name="profile_desc">foto profile</string>
+    <string name="profile">foto profile</string>
+    <string name="food">makanan</string>
+    <string name="logout">Keluar Akun</string>
 </resources>

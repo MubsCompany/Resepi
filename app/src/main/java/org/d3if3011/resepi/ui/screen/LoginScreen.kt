@@ -158,7 +158,9 @@ fun ScreenContent(modifier: Modifier, navController: NavHostController) {
                 emailError = email.equals("")
                 passwordError = password.equals("")
                 if (emailError || passwordError)return@Button
-                      },
+                else navController.navigate(Screen.HomePage.route)
+                      }
+            ,
             modifier = Modifier
                 .fillMaxWidth()
                 .size(70.dp)
@@ -196,7 +198,7 @@ fun ScreenContent(modifier: Modifier, navController: NavHostController) {
         )
 
         OutlinedButton(
-            onClick = { /* Handle login action */ },
+            onClick = { /* Handle login via google action */ },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 24.dp)
