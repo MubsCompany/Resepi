@@ -3,4 +3,7 @@ package org.d3if3011.resepi.navigation
 sealed class Screen(val route: String) {
     data object Login: Screen("loginScreen")
     data object Registrasi: Screen("registrasiScreen")
+
+    data object Home: Screen("homeScreen")
+    data object Bookmark: Screen("bookmarkScreen")
 }

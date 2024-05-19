@@ -73,4 +73,7 @@ dependencies {
 //    dependency for svg loader
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation("io.coil-kt:coil-svg:2.2.2")
+
+    //dependency for the navigation.
+    implementation ("androidx.navigation:navigation-compose:2.7.0-rc01")
 }

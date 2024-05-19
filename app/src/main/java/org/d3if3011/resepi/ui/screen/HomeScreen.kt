@@ -50,10 +50,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
     Scaffold (
         topBar = {
             HomeTopBar()
@@ -83,7 +85,8 @@ fun HomeTopBar () {
             ) {
 
                     OutlinedTextField(
-                        modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
                             .border(
                                 BorderStroke(
                                     0.1.dp,
@@ -319,6 +322,6 @@ fun ResepListItemPreview() {
 @Preview
 @Composable
 fun HomeScreenPreview () {
-    HomeScreen(Modifier.fillMaxSize())
+    HomeScreen(rememberNavController(), Modifier.fillMaxSize())
 }
 
