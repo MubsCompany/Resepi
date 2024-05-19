@@ -230,19 +230,18 @@ fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes
             modifier = Modifier.width(32.dp)
         )
         Spacer(modifier = Modifier.width(10.dp))
-        Column () {
-            Text(
-                text = stringResource(categoryTitleRes),
-                color = Color.DarkGray,
-                fontSize = 14.sp
-            )
+//        Column () {
+//            Text(
+//                text = stringResource(categoryTitleRes),
+//                color = Color.DarkGray,
+//                fontSize = 14.sp
+//            )
             Text(
                 text = stringResource(categoryTextRes),
                 color = Color.DarkGray,
-                fontWeight = FontWeight.Light,
                 fontSize = 12.sp
             )
-        }
+//        }
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = Icons.Filled.KeyboardArrowRight,

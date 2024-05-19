@@ -2,12 +2,15 @@ package org.d3if3011.resepi.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import org.d3if3011.resepi.R
 
 //initializing the data class with default parameters
 data class BottomNavigationItem(
     val label : String = "",
-    val icon : ImageVector = Icons.Filled.Home,
+    val icon : Int = R.drawable.ic_home,
     val route : String = ""
 ) {
 
@@ -16,13 +19,13 @@ data class BottomNavigationItem(
         return listOf(
             BottomNavigationItem(
                 label = "Home",
-                icon = Icons.Filled.Home,
-                route = Screen.Home.route
+                icon = R.drawable.ic_home,
+                route = Screen.HomePage.route
             ),
             BottomNavigationItem(
                 label = "Bookmark",
-                icon = Icons.Filled.Home,
-                route = Screen.Bookmark.route
+                icon = R.drawable.ic_bookmark,
+                route = Screen.BookmarkPage.route
             ),
 //            BottomNavigationItem(
 //                label = "Profile",
