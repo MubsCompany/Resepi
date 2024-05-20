@@ -27,6 +27,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,19 +52,57 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.navigation.BottomNavigationItem
 import org.d3if3011.resepi.navigation.Screen
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
+    var navigationSelectedItem by remember {
+        mutableStateOf(0)
+    }
     Scaffold (
         topBar = {
             HomeTopBar(navController)
-        }
+        },
+        bottomBar = {
+            NavigationBar (
+                containerColor = Color.White,
+            ) {
+                //getting the list of bottom navigation items for our data class
+                BottomNavigationItem().bottomNavigationItems().forEachIndexed { index, navigationItem ->
+
+                    //iterating all items with their respective indexes
+                    NavigationBarItem(
+                        selected = index == navigationSelectedItem,
+                        label = {
+                            Text(navigationItem.label)
+                        },
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = navigationItem.icon),
+                                contentDescription = navigationItem.label,
+                                modifier = Modifier.size(25.dp)
+                            )
+                        },
+                        onClick = {
+                            if (navigationSelectedItem == 0) navigationSelectedItem++
+                            else navigationSelectedItem--
+
+                        }
+
+                    )
+                }
+            }
+        }, modifier = Modifier.fillMaxSize()
     ) {paddingValues ->
+        if (navigationSelectedItem == 0)
         HomeScreenContent(modifier = Modifier.padding(paddingValues))
+        else
+            BookmarkScreen(modifier = Modifier.padding(paddingValues))
     }
 }
 
@@ -125,7 +165,6 @@ fun HomeTopBar (navController: NavHostController) {
 
 @Composable
 fun HomeScreenContent(modifier: Modifier = Modifier) {
-
     Column (
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -150,7 +189,7 @@ fun HomeScreenContent(modifier: Modifier = Modifier) {
             categoryTextRes = R.string.resep_berbahan_daging,
             iconRes = painterResource(id = R.drawable.ic_ayam)
         )
-        
+
         CategoryButton(
             containerColor = Color(0xFFCFDCFF),
             categoryTitleRes = R.string.ikan,
@@ -172,7 +211,7 @@ fun HomeScreenContent(modifier: Modifier = Modifier) {
             painter = painterResource(id = R.drawable.home_banner_tengah),
             contentDescription = "Banner tengah"
         )
-        
+
         Row (
             modifier = Modifier
                 .fillMaxWidth()
@@ -208,7 +247,6 @@ fun HomeScreenContent(modifier: Modifier = Modifier) {
             resepDesc = "Ayam goreng dicampur dengan taburan krispi",
             resepTime = "60 menit"
         )
-
     }
 }
 

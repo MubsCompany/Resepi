@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,7 +31,7 @@ import org.d3if3011.resepi.ui.theme.ResepiTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(navController: NavHostController) {
 //initializing the default selected item
     var navigationSelectedItem by remember {
         mutableStateOf(0)
@@ -39,13 +40,7 @@ fun BottomNavigationBar() {
      * by using the rememberNavController()
      * we can get the instance of the navController
      */
-    val navController = rememberNavController()
-
-
-
-//scaffold to hold our bottom navigation Bar
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar (
                 containerColor = Color.White,
@@ -80,34 +75,38 @@ fun BottomNavigationBar() {
                     )
                 }
             }
-        }
+        },
     ) { paddingValues ->
         //We need to setup our NavHost in here
-        NavHost(
-            navController = navController,
-            startDestination = Screen.HomePage.route,
-            modifier = Modifier.padding(paddingValues = paddingValues)) {
-            composable(Screen.HomePage.route) {
-                HomeScreen(
-                    navController
-                )
-            }
-            composable(Screen.BookmarkPage.route) {
-                BookmarkScreen(
-                    navController = navController
-                )
-            }
-//            composable(Screens.Profile.route) {
-//                //call our composable screens here
+//        NavHost(
+//            navController = navController,
+//            startDestination = Screen.HomePage.route,
+//            modifier = Modifier.padding(paddingValues = paddingValues)) {
+//            composable(Screen.HomePage.route) {
+//                HomeScreen(
+//                    navController
+//                )
 //            }
-        }
+//            composable(Screen.BookmarkPage.route) {
+//                BookmarkScreen(
+//                    navController = navController
+//                )
+//            }
+////            composable(Screens.Profile.route) {
+////                //call our composable screens here
+////            }
+//        }
     }
+
+
+
+//scaffold to hold our bottom navigation Bar
 }
 
 @Preview
 @Composable
 fun BottomNavigationPreview() {
     ResepiTheme {
-        BottomNavigationBar()
+        BottomNavigationBar(rememberNavController())
     }
 }

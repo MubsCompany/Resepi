@@ -23,7 +23,7 @@ import org.d3if3011.resepi.R
 import org.d3if3011.resepi.ui.theme.ResepiTheme
 
 @Composable
-fun BookmarkScreen(navController: NavController) {
+fun BookmarkScreen(modifier: Modifier) {
     ResepiTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
