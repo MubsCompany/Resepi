@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.FirebaseApp
 import org.d3if3011.resepi.navigation.SetupNavGraph
 import org.d3if3011.resepi.ui.screen.LoginScreen
 import org.d3if3011.resepi.ui.theme.ResepiTheme
@@ -18,6 +19,7 @@ import org.d3if3011.resepi.ui.theme.ResepiTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
             ResepiTheme {
                 // A surface container using the 'background' color from the theme

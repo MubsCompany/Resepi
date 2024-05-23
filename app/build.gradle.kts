@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -76,4 +77,9 @@ dependencies {
 
     //dependency for the navigation.
     implementation ("androidx.navigation:navigation-compose:2.7.0-rc01")
+
+    //firebase depedency
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.firebase:firebase-auth-ktx:21.0.0")
 }

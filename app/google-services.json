@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "390661885106",
+    "project_id": "resepi-7936f",
+    "storage_bucket": "resepi-7936f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390661885106:android:a2fa445730ee80b4bc8dab",
+        "android_client_info": {
+          "package_name": "org.d3if3011.resepi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRBLDG4VzISNRcHp8S_kCLYXEdFUXbl2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
