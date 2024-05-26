@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import org.d3if3011.resepi.ui.screen.DetailScreen
 import org.d3if3011.resepi.ui.screen.HomeScreen
 import org.d3if3011.resepi.ui.screen.LoginScreen
 import org.d3if3011.resepi.ui.screen.ProfileTopAppBar
@@ -30,6 +31,9 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         }
         composable(route = Screen.SearchPage.route) {
             SearchTopBar(navController)
+        }
+        composable(route = Screen.DetailPage.route) {
+            DetailScreen(navController)
         }
 //        composable()
     }

@@ -3,6 +3,7 @@ package org.d3if3011.resepi.ui.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -100,7 +101,7 @@ fun HomeScreen(navController: NavHostController) {
         }, modifier = Modifier.fillMaxSize()
     ) {paddingValues ->
         if (navigationSelectedItem == 0)
-        HomeScreenContent(modifier = Modifier.padding(paddingValues))
+        HomeScreenContent(navController, modifier = Modifier.padding(paddingValues))
         else
             BookmarkScreen(modifier = Modifier.padding(paddingValues))
     }
@@ -164,7 +165,7 @@ fun HomeTopBar (navController: NavHostController) {
 }
 
 @Composable
-fun HomeScreenContent(modifier: Modifier = Modifier) {
+fun HomeScreenContent(navController: NavHostController, modifier: Modifier = Modifier) {
     Column (
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -233,19 +234,22 @@ fun HomeScreenContent(modifier: Modifier = Modifier) {
         ResepListItem(
             resepTitle = "Ayam Goreng Krispi",
             resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit"
+            resepTime = "60 menit",
+            navController
         )
 
         ResepListItem(
             resepTitle = "Ayam Goreng Krispi",
             resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit"
+            resepTime = "60 menit",
+            navController
         )
 
         ResepListItem(
             resepTitle = "Ayam Goreng Krispi",
             resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit"
+            resepTime = "60 menit",
+            navController = navController
         )
     }
 }
@@ -290,12 +294,13 @@ fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes
 }
 
 @Composable
-fun ResepListItem(resepTitle: String, resepDesc: String, resepTime: String) {
+fun ResepListItem(resepTitle: String, resepDesc: String, resepTime: String, navController: NavHostController) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(20.dp)
+                .clickable { navController.navigate(Screen.DetailPage.route) },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -353,7 +358,8 @@ fun ResepListItemPreview() {
     ResepListItem(
         resepTitle = "Ayam Goreng Krispi",
         resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-        resepTime = "60 menit"
+        resepTime = "60 menit",
+        rememberNavController()
     )
 }
 
