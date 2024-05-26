@@ -8,4 +8,8 @@ sealed class Screen(val route: String) {
     data object HomePage: Screen("homeScreen")
     data object ProfilePage: Screen("profileScreen")
     data object SearchPage: Screen("searchScreen")
+
+    data object BottomNavigationBar: Screen("bottomNavigationBar")
+
+    data object DetailPage: Screen("detailScreen")
 }

@@ -3,6 +3,7 @@ package org.d3if3011.resepi.ui.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,7 +63,7 @@ fun HomeScreen(navController: NavHostController) {
             HomeTopBar(navController)
         }
     ) {paddingValues ->
-        HomeScreenContent(modifier = Modifier.padding(paddingValues))
+        HomeScreenContent(navController, modifier = Modifier.padding(paddingValues))
     }
 }
 
@@ -113,7 +114,6 @@ fun HomeTopBar (navController: NavHostController) {
                     )
 
 
-
                 Spacer(modifier = Modifier.width(8.dp))
                 IconButton(onClick = { navController.navigate(Screen.ProfilePage.route) }) {
                     Icon(imageVector = Icons.Filled.Person, contentDescription = "Profile")
@@ -124,7 +124,7 @@ fun HomeTopBar (navController: NavHostController) {
 }
 
 @Composable
-fun HomeScreenContent(modifier: Modifier = Modifier) {
+fun HomeScreenContent(navController: NavHostController, modifier: Modifier = Modifier) {
 
     Column (
         modifier = modifier
@@ -141,28 +141,28 @@ fun HomeScreenContent(modifier: Modifier = Modifier) {
             containerColor = Color(0xFFFFDBB9),
             categoryTitleRes = R.string.ayam,
             categoryTextRes = R.string.resep_berbahan_ayam,
-            iconRes = painterResource(id = R.drawable.ic_ayam)
+            iconRes = painterResource(id = R.drawable.ic_ayam),
         )
 
         CategoryButton(
             containerColor = Color(0xFFFFC6C2),
             categoryTitleRes = R.string.daging,
             categoryTextRes = R.string.resep_berbahan_daging,
-            iconRes = painterResource(id = R.drawable.ic_ayam)
+            iconRes = painterResource(id = R.drawable.ic_ayam),
         )
         
         CategoryButton(
             containerColor = Color(0xFFCFDCFF),
             categoryTitleRes = R.string.ikan,
             categoryTextRes = R.string.resep_berbahan_ikan,
-            iconRes = painterResource(id = R.drawable.ic_ikan)
+            iconRes = painterResource(id = R.drawable.ic_ikan),
         )
 
         CategoryButton(
             containerColor = Color(0xFFE4F2BB),
             categoryTitleRes = R.string.sayuran,
             categoryTextRes = R.string.resep_berbahan_sayuran,
-            iconRes = painterResource(id = R.drawable.ic_brokoli)
+            iconRes = painterResource(id = R.drawable.ic_brokoli),
         )
 
         Image(
@@ -194,23 +194,38 @@ fun HomeScreenContent(modifier: Modifier = Modifier) {
         ResepListItem(
             resepTitle = "Ayam Goreng Krispi",
             resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit"
+            resepTime = "60 menit",
+            navController
         )
 
         ResepListItem(
             resepTitle = "Ayam Goreng Krispi",
             resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit"
+            resepTime = "60 menit",
+            navController
         )
 
         ResepListItem(
             resepTitle = "Ayam Goreng Krispi",
             resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit"
+            resepTime = "60 menit",
+            navController
         )
 
     }
 }
+
+@Composable
+fun CustomBottomBar() {
+    Row {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_home),
+            contentDescription = null,
+            modifier = Modifier.size(25.dp)
+        )
+    }
+}
+
 
 @Composable
 fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes: Int, iconRes: Painter) {
@@ -218,7 +233,7 @@ fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-        onClick = {},
+        onClick = {  },
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor
         ),
@@ -252,12 +267,13 @@ fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes
 }
 
 @Composable
-fun ResepListItem(resepTitle: String, resepDesc: String, resepTime: String) {
+fun ResepListItem(resepTitle: String, resepDesc: String, resepTime: String, navController: NavHostController) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(20.dp)
+                .clickable { navController.navigate(Screen.DetailPage.route) },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -315,7 +331,8 @@ fun ResepListItemPreview() {
     ResepListItem(
         resepTitle = "Ayam Goreng Krispi",
         resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-        resepTime = "60 menit"
+        resepTime = "60 menit",
+        navController = rememberNavController()
     )
 }
 

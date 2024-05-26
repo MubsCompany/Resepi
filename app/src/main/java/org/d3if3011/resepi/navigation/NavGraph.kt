@@ -31,5 +31,6 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         composable(route = Screen.SearchPage.route) {
             SearchTopBar(navController)
         }
+//        composable()
     }
 }

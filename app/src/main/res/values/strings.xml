@@ -33,4 +33,8 @@
     <string name="profile">foto profile</string>
     <string name="food">makanan</string>
     <string name="logout">Keluar Akun</string>
+    <string name="_60_menit">60 menit</string>
+    <string name="bahan_masakan">Bahan Masakan</string>
+    <string name="alat_masak">Alat Masak</string>
+    <string name="cara_memasak">Cara Memasak</string>
 </resources>
