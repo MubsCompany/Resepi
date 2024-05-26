@@ -3,7 +3,6 @@ package org.d3if3011.resepi.ui.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +27,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -51,19 +52,57 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.navigation.BottomNavigationItem
 import org.d3if3011.resepi.navigation.Screen
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
+    var navigationSelectedItem by remember {
+        mutableStateOf(0)
+    }
     Scaffold (
         topBar = {
             HomeTopBar(navController)
-        }
+        },
+        bottomBar = {
+            NavigationBar (
+                containerColor = Color.White,
+            ) {
+                //getting the list of bottom navigation items for our data class
+                BottomNavigationItem().bottomNavigationItems().forEachIndexed { index, navigationItem ->
+
+                    //iterating all items with their respective indexes
+                    NavigationBarItem(
+                        selected = index == navigationSelectedItem,
+                        label = {
+                            Text(navigationItem.label)
+                        },
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = navigationItem.icon),
+                                contentDescription = navigationItem.label,
+                                modifier = Modifier.size(25.dp)
+                            )
+                        },
+                        onClick = {
+                            if (navigationSelectedItem == 0) navigationSelectedItem++
+                            else navigationSelectedItem--
+
+                        }
+
+                    )
+                }
+            }
+        }, modifier = Modifier.fillMaxSize()
     ) {paddingValues ->
-        HomeScreenContent(navController, modifier = Modifier.padding(paddingValues))
+        if (navigationSelectedItem == 0)
+        HomeScreenContent(modifier = Modifier.padding(paddingValues))
+        else
+            BookmarkScreen(modifier = Modifier.padding(paddingValues))
     }
 }
 
@@ -114,6 +153,7 @@ fun HomeTopBar (navController: NavHostController) {
                     )
 
 
+
                 Spacer(modifier = Modifier.width(8.dp))
                 IconButton(onClick = { navController.navigate(Screen.ProfilePage.route) }) {
                     Icon(imageVector = Icons.Filled.Person, contentDescription = "Profile")
@@ -124,8 +164,7 @@ fun HomeTopBar (navController: NavHostController) {
 }
 
 @Composable
-fun HomeScreenContent(navController: NavHostController, modifier: Modifier = Modifier) {
-
+fun HomeScreenContent(modifier: Modifier = Modifier) {
     Column (
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -141,28 +180,28 @@ fun HomeScreenContent(navController: NavHostController, modifier: Modifier = Mod
             containerColor = Color(0xFFFFDBB9),
             categoryTitleRes = R.string.ayam,
             categoryTextRes = R.string.resep_berbahan_ayam,
-            iconRes = painterResource(id = R.drawable.ic_ayam),
+            iconRes = painterResource(id = R.drawable.ic_ayam)
         )
 
         CategoryButton(
             containerColor = Color(0xFFFFC6C2),
             categoryTitleRes = R.string.daging,
             categoryTextRes = R.string.resep_berbahan_daging,
-            iconRes = painterResource(id = R.drawable.ic_ayam),
+            iconRes = painterResource(id = R.drawable.ic_ayam)
         )
-        
+
         CategoryButton(
             containerColor = Color(0xFFCFDCFF),
             categoryTitleRes = R.string.ikan,
             categoryTextRes = R.string.resep_berbahan_ikan,
-            iconRes = painterResource(id = R.drawable.ic_ikan),
+            iconRes = painterResource(id = R.drawable.ic_ikan)
         )
 
         CategoryButton(
             containerColor = Color(0xFFE4F2BB),
             categoryTitleRes = R.string.sayuran,
             categoryTextRes = R.string.resep_berbahan_sayuran,
-            iconRes = painterResource(id = R.drawable.ic_brokoli),
+            iconRes = painterResource(id = R.drawable.ic_brokoli)
         )
 
         Image(
@@ -172,7 +211,7 @@ fun HomeScreenContent(navController: NavHostController, modifier: Modifier = Mod
             painter = painterResource(id = R.drawable.home_banner_tengah),
             contentDescription = "Banner tengah"
         )
-        
+
         Row (
             modifier = Modifier
                 .fillMaxWidth()
@@ -194,38 +233,22 @@ fun HomeScreenContent(navController: NavHostController, modifier: Modifier = Mod
         ResepListItem(
             resepTitle = "Ayam Goreng Krispi",
             resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit",
-            navController
+            resepTime = "60 menit"
         )
 
         ResepListItem(
             resepTitle = "Ayam Goreng Krispi",
             resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit",
-            navController
+            resepTime = "60 menit"
         )
 
         ResepListItem(
             resepTitle = "Ayam Goreng Krispi",
             resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit",
-            navController
-        )
-
-    }
-}
-
-@Composable
-fun CustomBottomBar() {
-    Row {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_home),
-            contentDescription = null,
-            modifier = Modifier.size(25.dp)
+            resepTime = "60 menit"
         )
     }
 }
-
 
 @Composable
 fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes: Int, iconRes: Painter) {
@@ -233,7 +256,7 @@ fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-        onClick = {  },
+        onClick = {},
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor
         ),
@@ -267,13 +290,12 @@ fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes
 }
 
 @Composable
-fun ResepListItem(resepTitle: String, resepDesc: String, resepTime: String, navController: NavHostController) {
+fun ResepListItem(resepTitle: String, resepDesc: String, resepTime: String) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
-                .clickable { navController.navigate(Screen.DetailPage.route) },
+                .padding(20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -331,8 +353,7 @@ fun ResepListItemPreview() {
     ResepListItem(
         resepTitle = "Ayam Goreng Krispi",
         resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-        resepTime = "60 menit",
-        navController = rememberNavController()
+        resepTime = "60 menit"
     )
 }
 
