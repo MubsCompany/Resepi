@@ -3,6 +3,8 @@
     <string name="email">Email</string>
     <string name="namaLengkap">Nama Lengkap</string>
     <string name="isian_tidak_boleh_kosong">%1$s tidak boleh kosong</string>
+    <string name="konfirmasi_salah">%1$s salah</string>
+    <string name="password_panjang">%1$s harus 6 huruf atau angka</string>
     <string name="password">Password</string>
     <string name="passwordVer">Konfirmasi Password</string>
     <string name="lupa_password">Lupa Password?</string>
@@ -29,6 +31,10 @@
     <string name="gambar_makanan">gambar makanan</string>
     <string name="profile_text">Informasi Akun</string>
     <string name="search_text">Pencarian</string>
+    <string name="search_ayam">Ayam</string>
+    <string name="search_daging">Daging</string>
+    <string name="search_ikan">Ikan</string>
+    <string name="search_sayur">Sayuran</string>
     <string name="profile_desc">foto profile</string>
     <string name="profile">foto profile</string>
     <string name="food">makanan</string>

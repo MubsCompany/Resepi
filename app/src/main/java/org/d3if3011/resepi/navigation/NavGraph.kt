@@ -29,7 +29,19 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
             ProfileTopAppBar(navController)
         }
         composable(route = Screen.SearchPage.route) {
-            SearchTopBar(navController)
+            SearchTopBar(navController, 1)
+        }
+        composable(route = Screen.SearchChicken.route) {
+            SearchTopBar(navController,2)
+        }
+        composable(route = Screen.SearchMeat.route) {
+            SearchTopBar(navController,3)
+        }
+        composable(route = Screen.SearchFish.route) {
+            SearchTopBar(navController,4)
+        }
+        composable(route = Screen.SearchVegies.route) {
+            SearchTopBar(navController,5)
         }
     }
 }

@@ -138,6 +138,8 @@ fun HomeTopBar (navController: NavHostController) {
                             .weight(1.0f),
                         value = searchText,
                         onValueChange = { searchText = it },
+
+                        //put on a placeholder
                         placeholder = { Text("cari resep kamu", color = Color.DarkGray) },
                         leadingIcon = {
                             IconButton(onClick = { navController.navigate(Screen.SearchPage.route) }) {

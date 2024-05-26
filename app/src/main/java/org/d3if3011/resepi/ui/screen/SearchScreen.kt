@@ -49,7 +49,7 @@ import org.d3if3011.resepi.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchTopBar(navController: NavHostController) {
+fun SearchTopBar(navController: NavHostController, tipe: Int) {
     Scaffold (
         topBar = {
             TopAppBar(
@@ -61,7 +61,14 @@ fun SearchTopBar(navController: NavHostController) {
                         )
                     }
                 },
-                title = { Text(text = stringResource(id = R.string.search_text),
+                title = { Text(text = stringResource(
+                    id =
+                    if (tipe == 1) R.string.search_text
+                    else if (tipe == 2) R.string.search_ayam
+                    else if (tipe == 3) R.string.search_daging
+                    else if (tipe == 4) R.string.search_ikan
+                    else R.string.search_sayur
+                ),
                     fontWeight = FontWeight.Medium
                 ) },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -209,5 +216,5 @@ Column (
 @Preview
 @Composable
 fun SearchPreview () {
-    SearchTopBar(rememberNavController())
+    SearchTopBar(rememberNavController(), 5)
 }

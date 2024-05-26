@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.controller.signIn
 import org.d3if3011.resepi.navigation.Screen
 import org.d3if3011.resepi.ui.theme.ResepiTheme
 
@@ -158,7 +159,7 @@ fun ScreenContent(modifier: Modifier, navController: NavHostController) {
                 emailError = email.equals("")
                 passwordError = password.equals("")
                 if (emailError || passwordError)return@Button
-                else navController.navigate(Screen.HomePage.route)
+                else signIn(email, password, navController)
                       }
             ,
             modifier = Modifier
