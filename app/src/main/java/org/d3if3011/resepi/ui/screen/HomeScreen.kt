@@ -100,7 +100,7 @@ fun HomeScreen(navController: NavHostController) {
         }, modifier = Modifier.fillMaxSize()
     ) {paddingValues ->
         if (navigationSelectedItem == 0)
-        HomeScreenContent(modifier = Modifier.padding(paddingValues))
+        HomeScreenContent(modifier = Modifier.padding(paddingValues), navController)
         else
             BookmarkScreen(modifier = Modifier.padding(paddingValues))
     }
@@ -166,7 +166,7 @@ fun HomeTopBar (navController: NavHostController) {
 }
 
 @Composable
-fun HomeScreenContent(modifier: Modifier = Modifier) {
+fun HomeScreenContent(modifier: Modifier = Modifier,  navController: NavHostController) {
     Column (
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -182,28 +182,33 @@ fun HomeScreenContent(modifier: Modifier = Modifier) {
             containerColor = Color(0xFFFFDBB9),
             categoryTitleRes = R.string.ayam,
             categoryTextRes = R.string.resep_berbahan_ayam,
-            iconRes = painterResource(id = R.drawable.ic_ayam)
+            iconRes = painterResource(id = R.drawable.ic_ayam),
+            navController
+
         )
 
         CategoryButton(
             containerColor = Color(0xFFFFC6C2),
             categoryTitleRes = R.string.daging,
             categoryTextRes = R.string.resep_berbahan_daging,
-            iconRes = painterResource(id = R.drawable.ic_ayam)
+            iconRes = painterResource(id = R.drawable.ic_ayam),
+            navController
         )
 
         CategoryButton(
             containerColor = Color(0xFFCFDCFF),
             categoryTitleRes = R.string.ikan,
             categoryTextRes = R.string.resep_berbahan_ikan,
-            iconRes = painterResource(id = R.drawable.ic_ikan)
+            iconRes = painterResource(id = R.drawable.ic_ikan),
+            navController
         )
 
         CategoryButton(
             containerColor = Color(0xFFE4F2BB),
             categoryTitleRes = R.string.sayuran,
             categoryTextRes = R.string.resep_berbahan_sayuran,
-            iconRes = painterResource(id = R.drawable.ic_brokoli)
+            iconRes = painterResource(id = R.drawable.ic_brokoli),
+            navController
         )
 
         Image(
@@ -253,12 +258,12 @@ fun HomeScreenContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes: Int, iconRes: Painter) {
+fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes: Int, iconRes: Painter, navController: NavHostController) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-        onClick = {},
+        onClick = {navController.navigate(Screen.SearchChicken.route)},
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor
         ),

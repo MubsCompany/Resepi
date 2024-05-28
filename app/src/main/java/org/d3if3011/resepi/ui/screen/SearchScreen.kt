@@ -216,5 +216,5 @@ Column (
 @Preview
 @Composable
 fun SearchPreview () {
-    SearchTopBar(rememberNavController(), 5)
+    SearchTopBar(rememberNavController(), 3)
 }
