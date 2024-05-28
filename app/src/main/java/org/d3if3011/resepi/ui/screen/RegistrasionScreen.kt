@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.controller.signUp
 import org.d3if3011.resepi.ui.theme.ResepiTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,11 +75,11 @@ fun RegistrasiScreen(navController: NavHostController) {
             .fillMaxSize()
             .padding(vertical = 24.dp)
     ){paddingValues ->
-        RegistScreen(modifier = Modifier.padding(paddingValues))
+        RegistScreen(modifier = Modifier.padding(paddingValues), navController)
     }
 }
 @Composable
-fun RegistScreen(modifier: Modifier){
+fun RegistScreen(modifier: Modifier, navController: NavHostController){
     var namaLengkap by rememberSaveable {
         mutableStateOf("")
     }
@@ -104,6 +105,12 @@ fun RegistScreen(modifier: Modifier){
         mutableStateOf(false)
     }
 
+    var passwordVerPassword by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var passwordLength by rememberSaveable {
+        mutableStateOf(false)
+    }
     Text(text = stringResource(id = R.string.regis),
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.SemiBold,
@@ -123,7 +130,7 @@ Column(
         label = { Text(text = stringResource(R.string.namaLengkap)) },
         trailingIcon = { if (namaLengkapError) Icon(imageVector = Icons.Filled.Warning, contentDescription = null) },
         isError = namaLengkapError,
-        supportingText = { ErrorHint(namaLengkapError, stringResource(id = R.string.namaLengkap)) },
+        supportingText = { ErrorHintRegist(namaLengkapError, stringResource(id = R.string.namaLengkap)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -137,7 +144,7 @@ Column(
         label = { Text(text = stringResource(R.string.email)) },
         trailingIcon = { if (emailError) Icon(imageVector = Icons.Filled.Warning, contentDescription = null) },
         isError = emailError,
-        supportingText = { ErrorHint(emailError, stringResource(id = R.string.email)) },
+        supportingText = { ErrorHintRegist(emailError, stringResource(id = R.string.email)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
@@ -150,8 +157,11 @@ Column(
         onValueChange = { password = it },
         label = { Text(text = stringResource(R.string.password)) },
         trailingIcon = { if (passwordError) Icon(imageVector = Icons.Filled.Warning, contentDescription = null) },
-        isError = passwordError,
-        supportingText = { ErrorHint(passwordError, stringResource(id = R.string.password)) },
+        isError = passwordLength,
+        supportingText = {
+           if(passwordLength) ErrorHintPasswordLenght(passwordLength, stringResource(id = R.string.password))
+           if (passwordError) ErrorHintRegist(passwordError, stringResource(id = R.string.password))
+                         },
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
@@ -163,9 +173,15 @@ Column(
         value = passwordVer,
         onValueChange = { passwordVer = it },
         label = { Text(text = stringResource(R.string.passwordVer)) },
-        trailingIcon = { if (passwordVerError) Icon(imageVector = Icons.Filled.Warning, contentDescription = null) },
-        isError = passwordVerError,
-        supportingText = { ErrorHint(passwordVerError, stringResource(id = R.string.passwordVer)) },
+        trailingIcon = {
+            if (passwordVerError) Icon(imageVector = Icons.Filled.Warning, contentDescription = null)
+            else if (!passwordVer.equals(password)) Icon(imageVector = Icons.Filled.Warning, contentDescription = null)
+                       },
+        isError = passwordVerError || passwordVerPassword,
+        supportingText = {
+            if (passwordVerError) ErrorHintRegist(passwordVerError, stringResource(id = R.string.passwordVer))
+            else if(passwordVerPassword) ErrorHintPassword(passwordVerPassword, stringResource(id = R.string.passwordVer))
+                         },
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
@@ -179,7 +195,15 @@ Column(
             namaLengkapError = namaLengkap.equals("")
             passwordError = password.equals("")
             passwordVerError = passwordVer.equals("")
+            passwordVerPassword = !passwordVer.equals(password)
+            passwordLength = password.length < 6
             if (emailError || namaLengkapError || passwordError || passwordVerError)return@Button
+            else if (passwordVerPassword)return@Button
+            else if (passwordLength) return@Button
+            //SignUp here
+            else {
+                signUp(email, namaLengkap, password, navController)
+            }
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -218,7 +242,7 @@ Column(
         color = Color.LightGray
         )
     OutlinedButton(
-        onClick = { /* Handle login action */ },
+        onClick = { /* Handle login google action */ },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 24.dp)
@@ -229,7 +253,9 @@ Column(
         )
     ) {
         Image(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp).size(22.dp),
+            modifier = Modifier
+                .padding(horizontal = 10.dp, vertical = 8.dp)
+                .size(22.dp),
             painter = painterResource(id = R.drawable.ic_google),
             contentDescription = null,
         )
@@ -240,6 +266,24 @@ Column(
         )
     }
 }
+}
+@Composable
+fun ErrorHintRegist(isError: Boolean, unit: String) {
+    if (isError) {
+        Text(text = stringResource(R.string.isian_tidak_boleh_kosong, unit))
+    }
+}
+@Composable
+fun ErrorHintPassword(isErrorPasswordVer: Boolean, unit: String) {
+    if (isErrorPasswordVer){
+        Text(text = stringResource(R.string.konfirmasi_salah, unit))
+    }
+}
+@Composable
+fun ErrorHintPasswordLenght(isErrorPasswordVer: Boolean, unit: String) {
+    if (isErrorPasswordVer){
+        Text(text = stringResource(R.string.password_panjang, unit))
+    }
 }
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
