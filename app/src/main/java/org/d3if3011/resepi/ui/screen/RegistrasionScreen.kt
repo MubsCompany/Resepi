@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,10 +28,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,11 +51,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
 import org.d3if3011.resepi.controller.signUp
+import org.d3if3011.resepi.navigation.Screen
 import org.d3if3011.resepi.ui.theme.ResepiTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrasiScreen(navController: NavHostController) {
+fun RegistrasiScreen(navController: NavHostController, consError: Boolean) {
     Scaffold (
         topBar = {
             TopAppBar(
@@ -75,11 +75,11 @@ fun RegistrasiScreen(navController: NavHostController) {
             .fillMaxSize()
             .padding(vertical = 24.dp)
     ){paddingValues ->
-        RegistScreen(modifier = Modifier.padding(paddingValues), navController)
+        RegistScreen(modifier = Modifier.padding(paddingValues), navController, consError = consError)
     }
 }
 @Composable
-fun RegistScreen(modifier: Modifier, navController: NavHostController){
+fun RegistScreen(modifier: Modifier, navController: NavHostController, consError: Boolean){
     var namaLengkap by rememberSaveable {
         mutableStateOf("")
     }
@@ -104,7 +104,6 @@ fun RegistScreen(modifier: Modifier, navController: NavHostController){
     var passwordVerError by rememberSaveable {
         mutableStateOf(false)
     }
-
     var passwordVerPassword by rememberSaveable {
         mutableStateOf(false)
     }
@@ -139,12 +138,15 @@ Column(
         modifier = Modifier.fillMaxWidth()
     )
     OutlinedTextField(
-        value = email,
+        value = consError.toString(),
         onValueChange = { email = it },
         label = { Text(text = stringResource(R.string.email)) },
         trailingIcon = { if (emailError) Icon(imageVector = Icons.Filled.Warning, contentDescription = null) },
-        isError = emailError,
-        supportingText = { ErrorHintRegist(emailError, stringResource(id = R.string.email)) },
+        isError = emailError || consError,
+        supportingText = {
+            if (emailError) ErrorHintRegist(emailError, stringResource(id = R.string.email))
+            if (consError) ErrorHintEmailExisted(consError, stringResource(id = R.string.email))
+        },
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
@@ -152,6 +154,7 @@ Column(
         ),
         modifier = Modifier.fillMaxWidth()
     )
+
     OutlinedTextField(
         value = password,
         onValueChange = { password = it },
@@ -229,7 +232,7 @@ Column(
         TextButton(
             onClick =
             {
-
+                navController.navigate(Screen.Login.route)
         }) {
             Text(
                 text = stringResource(R.string.login),
@@ -285,11 +288,17 @@ fun ErrorHintPasswordLenght(isErrorPasswordVer: Boolean, unit: String) {
         Text(text = stringResource(R.string.password_panjang, unit))
     }
 }
+@Composable
+fun ErrorHintEmailExisted(isErrorEmailExist: Boolean, unit: String){
+    if (isErrorEmailExist == true){
+        Text(text = stringResource(R.string.email_sudah_ada, unit))
+    }
+}
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun Prev() {
     ResepiTheme {
-        RegistrasiScreen(rememberNavController())
+        RegistrasiScreen(rememberNavController(), false)
     }
 }

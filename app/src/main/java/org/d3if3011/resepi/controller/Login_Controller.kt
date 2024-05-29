@@ -33,10 +33,10 @@ public fun signUp(email: String, namaLengkap: String, password: String, navContr
                 // User creation failed, handle the error
                 val exception = task.exception
                 Log.e(TAG, "Error creating user", exception)
+                navController.navigate(Screen.RegistrasiError.route)
                 // Handle the error, display a message to the user, etc.
             }
         }
-
 }
 private fun saveUserData(userId: String, email: String, namaLengkap: String, password: String) {
     val db = FirebaseFirestore.getInstance()
