@@ -190,7 +190,8 @@ fun HomeScreenContent(modifier: Modifier = Modifier, navController: NavHostContr
             categoryTitleRes = R.string.ayam,
             categoryTextRes = R.string.resep_berbahan_ayam,
             iconRes = painterResource(id = R.drawable.ic_ayam),
-            navController
+            navController,
+            2
 
         )
 
@@ -199,7 +200,8 @@ fun HomeScreenContent(modifier: Modifier = Modifier, navController: NavHostContr
             categoryTitleRes = R.string.daging,
             categoryTextRes = R.string.resep_berbahan_daging,
             iconRes = painterResource(id = R.drawable.ic_ayam),
-            navController
+            navController,
+            3
         )
 
         CategoryButton(
@@ -207,7 +209,8 @@ fun HomeScreenContent(modifier: Modifier = Modifier, navController: NavHostContr
             categoryTitleRes = R.string.ikan,
             categoryTextRes = R.string.resep_berbahan_ikan,
             iconRes = painterResource(id = R.drawable.ic_ikan),
-            navController
+            navController,
+            4
         )
 
         CategoryButton(
@@ -215,7 +218,8 @@ fun HomeScreenContent(modifier: Modifier = Modifier, navController: NavHostContr
             categoryTitleRes = R.string.sayuran,
             categoryTextRes = R.string.resep_berbahan_sayuran,
             iconRes = painterResource(id = R.drawable.ic_brokoli),
-            navController
+            navController,
+            5
         )
 
         Image(
@@ -255,13 +259,18 @@ fun HomeScreenContent(modifier: Modifier = Modifier, navController: NavHostContr
 
 }
 @Composable
-fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes: Int, iconRes: Painter, navController: NavHostController) {
+fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes: Int, iconRes: Painter, navController: NavHostController, tipe: Int) {
     //Tambahkan tipe int pada onclick agar title bisa diganti, masih Ayam semua :))
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-        onClick = {navController.navigate(Screen.SearchChicken.route)},
+        onClick = {
+            if (tipe == 2) navController.navigate(Screen.SearchChicken.route)
+                else if (tipe == 3) navController.navigate(Screen.SearchMeat.route)
+                else if (tipe == 4) navController.navigate(Screen.SearchFish.route)
+                else if (tipe == 5) navController.navigate(Screen.SearchVegies.route)
+                  },
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor
         ),
