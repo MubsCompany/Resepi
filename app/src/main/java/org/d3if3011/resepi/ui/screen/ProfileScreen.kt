@@ -1,7 +1,6 @@
 package org.d3if3011.resepi.ui.screen
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,12 +16,16 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,13 +34,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.controller.Profile
+import org.d3if3011.resepi.controller.signOut
+import org.d3if3011.resepi.model.UserLogin
 import org.d3if3011.resepi.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,6 +75,10 @@ fun ProfileTopAppBar(navController: NavHostController) {
 
 @Composable
 fun ProfileContent(modifier: Modifier, navController: NavHostController){
+    var listUser by remember { mutableStateOf<List<UserLogin>>(emptyList()) }
+    LaunchedEffect(Unit) {
+        listUser = Profile()
+    }
     Column (
         modifier = modifier
             .fillMaxWidth()
@@ -79,26 +88,28 @@ fun ProfileContent(modifier: Modifier, navController: NavHostController){
             verticalAlignment = Alignment.CenterVertically
         ){
             Image(
-                painter = painterResource(id = R.drawable.profile_dummy),
+                painter = painterResource(id = R.drawable.baseline_account_circle_24),
                 contentDescription = stringResource(id = R.string.profile_desc),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(123.dp)
                     .clip(CircleShape)
             )
-            Column (
-                modifier = Modifier.padding(start = 12.dp),
-                verticalArrangement = Arrangement.SpaceEvenly
-            ){
-                Text(text = "Wisnu Kresnohadi", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
-                Text(text = "wisnukresnohadi@gmail.com")
+            listUser.forEach{
+                Column (
+                    modifier = Modifier.padding(start = 12.dp),
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ){
+                    Text(text = it.nama_lengkap, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+                    Text(text = it.email)
+                }
             }
         }
         Row (
             modifier = Modifier.padding(top = 24.dp)
         ){
             Button(
-                onClick = { navController.navigate(Screen.Login.route) },
+                onClick = { signOut(navController) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White
                 )

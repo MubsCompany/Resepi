@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +48,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.controller.SearchResep
+import org.d3if3011.resepi.controller.ambilResepSearch
+import org.d3if3011.resepi.model.ResepMasakan
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,12 +83,16 @@ fun SearchTopBar(navController: NavHostController, tipe: Int) {
             )
         }
     ) { paddingValues ->
-        SearchContent(modifier = Modifier.padding(paddingValues))
+        SearchContent(modifier = Modifier.padding(paddingValues), tipe)
     }
 }
 
 @Composable
-fun SearchContent(modifier: Modifier){
+fun SearchContent(modifier: Modifier, tipe: Int){
+    var listResep by remember { mutableStateOf<List<ResepMasakan>>(emptyList()) }
+    LaunchedEffect(Unit){
+        ambilResepSearch(tipe)
+    }
     val roundSize = 30
     var searchText by remember {
         mutableStateOf("")
@@ -109,7 +118,9 @@ Column (
         onValueChange = { searchText = it },
         placeholder = { Text("cari resep kamu", color = Color.DarkGray) },
         leadingIcon = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = {
+                listResep = SearchResep(searchText, tipe)
+            }) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
@@ -119,6 +130,8 @@ Column (
             }
         },
         )
+    if (listResep.isNotEmpty()){
+    listResep.forEach {
     Column (
         modifier = Modifier
             .padding(horizontal = 12.dp)
@@ -135,14 +148,14 @@ Column (
                     .padding(8.dp)
             ) {
                 Text(
-                    text = "Ayam Goreng Crispy",
+                    text = it.nama_resep,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
                 Text(
-                    text = "Ayam goreng dicampur dengan taburan crispy",
+                    text = it.deskripsi_resep,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -152,7 +165,7 @@ Column (
                 ){
                     Image(painter = painterResource(id = R.drawable.clock), contentDescription = null)
                     Text(
-                        text = "60 menit",
+                        text = it.waktu,
                         maxLines = 1,
                         )
                 }
@@ -167,54 +180,25 @@ Column (
             )
         }
         Divider(modifier = Modifier.padding(top = 24.dp))
-
-        Row (
+    }
+    }
+    } else {
+        Column (
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp)
+                .padding(horizontal = 12.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ){
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = "Nasi Goreng Ayam",
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-                Text(
-                    text = "Nasi Goreng dipadukan dengan daging suir ayam",
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Row (
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 8.dp)
-                ){
-                    Image(painter = painterResource(id = R.drawable.clock), contentDescription = null)
-                    Text(
-                        text = "15 menit",
-                        maxLines = 1,
-                    )
-                }
+            Text(text = stringResource(id = R.string.resep_kosong))
             }
-            Image(
-                painter = painterResource(id = R.drawable.example_nasigoreng),
-                contentDescription = stringResource(id = R.string.food),
-                modifier = Modifier
-                    .size(124.dp)
-                    .clip(shape = RoundedCornerShape(12.dp))
-            )
+            Divider(modifier = Modifier.padding(top = 24.dp))
         }
-        Divider(modifier = Modifier.padding(top = 24.dp))
     }
 }
-}
+
 @Preview
 @Composable
 fun SearchPreview () {
-    SearchTopBar(rememberNavController(), 5)
+    SearchTopBar(rememberNavController(), 3)
 }

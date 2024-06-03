@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,7 +48,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,11 +56,19 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.controller.ambilDaftarResepDariFirestore
+import org.d3if3011.resepi.model.ResepMasakan
 import org.d3if3011.resepi.navigation.BottomNavigationItem
 import org.d3if3011.resepi.navigation.Screen
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
+    var daftarResepMasakan by remember { mutableStateOf<List<ResepMasakan>>(emptyList()) }
+
+
+    LaunchedEffect(Unit) {
+        daftarResepMasakan = ambilDaftarResepDariFirestore()
+    }
     var navigationSelectedItem by remember {
         mutableStateOf(0)
     }
@@ -101,7 +108,7 @@ fun HomeScreen(navController: NavHostController) {
         }, modifier = Modifier.fillMaxSize()
     ) {paddingValues ->
         if (navigationSelectedItem == 0)
-        HomeScreenContent(navController, modifier = Modifier.padding(paddingValues))
+        HomeScreenContent(modifier = Modifier.padding(paddingValues), navController, daftarResepMasakan)
         else
             BookmarkScreen(modifier = Modifier.padding(paddingValues))
     }
@@ -167,8 +174,8 @@ fun HomeTopBar (navController: NavHostController) {
 }
 
 @Composable
-fun HomeScreenContent(navController: NavHostController, modifier: Modifier = Modifier) {
-    Column (
+fun HomeScreenContent(modifier: Modifier = Modifier, navController: NavHostController, resepMasakanList: List<ResepMasakan>) {
+    Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
     ) {
@@ -183,28 +190,37 @@ fun HomeScreenContent(navController: NavHostController, modifier: Modifier = Mod
             containerColor = Color(0xFFFFDBB9),
             categoryTitleRes = R.string.ayam,
             categoryTextRes = R.string.resep_berbahan_ayam,
-            iconRes = painterResource(id = R.drawable.ic_ayam)
+            iconRes = painterResource(id = R.drawable.ic_ayam),
+            navController,
+            2
+
         )
 
         CategoryButton(
             containerColor = Color(0xFFFFC6C2),
             categoryTitleRes = R.string.daging,
             categoryTextRes = R.string.resep_berbahan_daging,
-            iconRes = painterResource(id = R.drawable.ic_ayam)
+            iconRes = painterResource(id = R.drawable.ic_ayam),
+            navController,
+            3
         )
 
         CategoryButton(
             containerColor = Color(0xFFCFDCFF),
             categoryTitleRes = R.string.ikan,
             categoryTextRes = R.string.resep_berbahan_ikan,
-            iconRes = painterResource(id = R.drawable.ic_ikan)
+            iconRes = painterResource(id = R.drawable.ic_ikan),
+            navController,
+            4
         )
 
         CategoryButton(
             containerColor = Color(0xFFE4F2BB),
             categoryTitleRes = R.string.sayuran,
             categoryTextRes = R.string.resep_berbahan_sayuran,
-            iconRes = painterResource(id = R.drawable.ic_brokoli)
+            iconRes = painterResource(id = R.drawable.ic_brokoli),
+            navController,
+            5
         )
 
         Image(
@@ -215,7 +231,7 @@ fun HomeScreenContent(navController: NavHostController, modifier: Modifier = Mod
             contentDescription = "Banner tengah"
         )
 
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
@@ -232,37 +248,30 @@ fun HomeScreenContent(navController: NavHostController, modifier: Modifier = Mod
                 color = Color(0xFFFF7A00)
             )
         }
-
-        ResepListItem(
-            resepTitle = "Ayam Goreng Krispi",
-            resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit",
-            navController
-        )
-
-        ResepListItem(
-            resepTitle = "Ayam Goreng Krispi",
-            resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit",
-            navController
-        )
-
-        ResepListItem(
-            resepTitle = "Ayam Goreng Krispi",
-            resepDesc = "Ayam goreng dicampur dengan taburan krispi",
-            resepTime = "60 menit",
-            navController = navController
-        )
+        resepMasakanList.forEach{
+                ResepListItem(
+                    resepTitle = it.nama_resep,
+                    resepDesc = it.deskripsi_resep,
+                    resepTime = it.waktu,
+                    imageUrl = it.gambar,
+                )
+        }
     }
-}
 
+}
 @Composable
-fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes: Int, iconRes: Painter) {
+fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes: Int, iconRes: Painter, navController: NavHostController, tipe: Int) {
+    //Tambahkan tipe int pada onclick agar title bisa diganti, masih Ayam semua :))
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-        onClick = {},
+        onClick = {
+            if (tipe == 2) navController.navigate(Screen.SearchChicken.route)
+                else if (tipe == 3) navController.navigate(Screen.SearchMeat.route)
+                else if (tipe == 4) navController.navigate(Screen.SearchFish.route)
+                else if (tipe == 5) navController.navigate(Screen.SearchVegies.route)
+                  },
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor
         ),
@@ -296,8 +305,10 @@ fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes
 }
 
 @Composable
-fun ResepListItem(resepTitle: String, resepDesc: String, resepTime: String, navController: NavHostController) {
-    Column {
+fun ResepListItem(resepTitle: String, resepDesc: String, resepTime: String, imageUrl: String) {
+    Column (
+        modifier = Modifier.clickable { /*NavController tiap halaman resep kirim uid dan get uid*/ }
+    ){
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -360,6 +371,8 @@ fun ResepListItemPreview() {
     ResepListItem(
         resepTitle = "Ayam Goreng Krispi",
         resepDesc = "Ayam goreng dicampur dengan taburan krispi",
+        resepTime = "60 menit",
+        imageUrl = ""
         resepTime = "60 menit",
         rememberNavController()
     )

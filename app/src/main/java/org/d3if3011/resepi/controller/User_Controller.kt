@@ -2,13 +2,14 @@ package org.d3if3011.resepi.controller
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import org.d3if3011.resepi.model.resep
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.tasks.await
+import org.d3if3011.resepi.model.UserLogin
 import org.d3if3011.resepi.navigation.Screen
 
 object id_user {
@@ -33,10 +34,10 @@ public fun signUp(email: String, namaLengkap: String, password: String, navContr
                 // User creation failed, handle the error
                 val exception = task.exception
                 Log.e(TAG, "Error creating user", exception)
+                navController.navigate(Screen.RegistrasiError.route)
                 // Handle the error, display a message to the user, etc.
             }
         }
-
 }
 private fun saveUserData(userId: String, email: String, namaLengkap: String, password: String) {
     val db = FirebaseFirestore.getInstance()
@@ -47,7 +48,6 @@ private fun saveUserData(userId: String, email: String, namaLengkap: String, pas
         "uid" to userId,
         "bookmarkResep" to listOf<Any?>(null)
     )
-
     // Add a new document with a generated ID
     db.collection("users")
         .document(userId)
@@ -77,7 +77,31 @@ public fun signIn(email: String, password: String, navController: NavHostControl
         }
 }
 
-fun signOut() {
+public fun signOut(navController: NavHostController) {
     FirebaseAuth.getInstance().signOut()
+    navController.navigate(Screen.Login.route)
     // Optionally, perform any other clean-up or navigation tasks after sign out
+}
+
+public suspend fun Profile(): List<UserLogin>{
+    val firestore = FirebaseFirestore.getInstance()
+    val userCollection = firestore.collection("users")
+    return try{
+        val querySnapshot = userCollection.whereEqualTo("uid", id_user.id_user).get().await()
+        val userList = mutableListOf<UserLogin>()
+
+        for (document in querySnapshot.documents){
+            val user = document.toObject(UserLogin::class.java)
+            user?.let {
+                userList.add(it)
+            }
+        }
+        userList
+    } catch (e: Exception){
+        emptyList()
+    }
+}
+
+fun GetUserId(): String{
+    return id_user.id_user
 }

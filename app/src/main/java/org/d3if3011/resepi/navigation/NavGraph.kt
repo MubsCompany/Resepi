@@ -21,7 +21,10 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
             LoginScreen(navController)
         }
         composable(route = Screen.Registrasi.route) {
-            RegistrasiScreen(navController)
+            RegistrasiScreen(navController, false)
+        }
+        composable(route = Screen.RegistrasiError.route) {
+            RegistrasiScreen(navController, true)
         }
         composable(route = Screen.HomePage.route) {
             HomeScreen(navController)

@@ -5,6 +5,7 @@
     <string name="isian_tidak_boleh_kosong">%1$s tidak boleh kosong</string>
     <string name="konfirmasi_salah">%1$s salah</string>
     <string name="password_panjang">%1$s harus 6 huruf atau angka</string>
+    <string name="email_sudah_ada">%1$s sudah terdaftar</string>
     <string name="password">Password</string>
     <string name="passwordVer">Konfirmasi Password</string>
     <string name="lupa_password">Lupa Password?</string>
@@ -39,6 +40,8 @@
     <string name="profile">foto profile</string>
     <string name="food">makanan</string>
     <string name="logout">Keluar Akun</string>
+    <string name="bookmark_kosong">Bookmark Kosong</string>
+    <string name="resep_kosong">Resep Kosong</string>
     <string name="_60_menit">60 menit</string>
     <string name="bahan_masakan">Bahan Masakan</string>
     <string name="alat_masak">Alat Masak</string>
