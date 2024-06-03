@@ -1,12 +1,8 @@
 package org.d3if3011.resepi.ui.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -19,12 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import org.d3if3011.resepi.R
 import org.d3if3011.resepi.controller.ambilDaftarResepBookmark
 import org.d3if3011.resepi.model.ResepMasakan
@@ -33,9 +25,13 @@ import org.d3if3011.resepi.ui.theme.ResepiTheme
 
 @Composable
 fun BookmarkScreen(modifier: Modifier) {
-    var listBookmark by remember { mutableStateOf<List<UserLogin>>(emptyList()) }
+    var user by remember { mutableStateOf<List<UserLogin>>(emptyList()) }
     LaunchedEffect(Unit){
-        listBookmark = ambilDaftarResepBookmark()
+        user = ambilDaftarResepBookmark()
+    }
+    var listBookmark by remember { mutableStateOf<List<ResepMasakan>>(emptyList()) }
+    user.forEach {
+        listBookmark = it.bookmarkResepMasakan
     }
     ResepiTheme {
         Surface(
@@ -43,23 +39,21 @@ fun BookmarkScreen(modifier: Modifier) {
             color = MaterialTheme.colorScheme.background
         ) {
             if (listBookmark.isNotEmpty()){
-            listBookmark.forEach{
-                it.bookmarkResepMasakan.forEach{
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(15.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    )  {
-                        Text(
-                            "ADA ISI",
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(vertical = 20.dp)
-                        )
-                    }   
-                }
-            }
+                    listBookmark.forEach{
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(15.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        )  {
+                            Text(
+                                "ADA ISI",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(vertical = 20.dp)
+                            )
+                        }
+                    }
             } else {
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally,
