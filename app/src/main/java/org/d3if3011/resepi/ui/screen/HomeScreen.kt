@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -30,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -46,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,7 +67,6 @@ import org.d3if3011.resepi.navigation.Screen
 @Composable
 fun HomeScreen(navController: NavHostController) {
     var daftarResepMasakan by remember { mutableStateOf<List<ResepMasakan>>(emptyList()) }
-
 
     LaunchedEffect(Unit) {
         daftarResepMasakan = ambilDaftarResepDariFirestore()
@@ -129,21 +131,20 @@ fun HomeTopBar (navController: NavHostController) {
         ),
         actions = {
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
                     OutlinedTextField(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .border(
-                                BorderStroke(
-                                    0.1.dp,
-                                    SolidColor(MaterialTheme.colorScheme.onSurface)
-                                ),
-                                RoundedCornerShape(12.dp)
-                            )
                             .weight(1.0f),
+                        shape = RoundedCornerShape(24.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedTextColor = Color.Gray,
+                            unfocusedBorderColor = Color.Gray,
+                            unfocusedLabelColor = Color.Gray,
+                            unfocusedLeadingIconColor = Color.Gray
+                        ),
                         value = searchText,
                         onValueChange = { searchText = it },
 
@@ -163,11 +164,19 @@ fun HomeTopBar (navController: NavHostController) {
                     )
 
 
-
                 Spacer(modifier = Modifier.width(8.dp))
-                IconButton(onClick = { navController.navigate(Screen.ProfilePage.route) }) {
-                    Icon(imageVector = Icons.Filled.Person, contentDescription = "Profile")
-                }
+
+                Image(
+                    painter = painterResource(id = R.drawable.img_hamburger),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(50.dp)
+//                        .padding(20.dp)
+                        .clip(CircleShape)
+                        .clickable { navController.navigate(Screen.ProfilePage.route) }
+//                        .border(3.dp, Color.Red, CircleShape)
+                )
             }
         },
     )
@@ -250,10 +259,12 @@ fun HomeScreenContent(modifier: Modifier = Modifier, navController: NavHostContr
         }
         resepMasakanList.forEach{
                 ResepListItem(
+                    idResep = it.uid,
                     resepTitle = it.nama_resep,
                     resepDesc = it.deskripsi_resep,
                     resepTime = it.waktu,
                     imageUrl = it.gambar,
+                    navController
                 )
         }
     }
@@ -305,15 +316,16 @@ fun CategoryButton(containerColor: Color, categoryTitleRes: Int, categoryTextRes
 }
 
 @Composable
-fun ResepListItem(resepTitle: String, resepDesc: String, resepTime: String, imageUrl: String) {
+fun ResepListItem(idResep: String,resepTitle: String, resepDesc: String, resepTime: String, imageUrl: String, navController: NavHostController) {
     Column (
-        modifier = Modifier.clickable { /*NavController tiap halaman resep kirim uid dan get uid*/ }
+        modifier = Modifier.clickable {
+            navController.navigate(Screen.DetailPage.route +"/"+ idResep)
+        }
     ){
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
-                .clickable { navController.navigate(Screen.DetailPage.route) },
+                .padding(20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -369,11 +381,11 @@ fun ResepListItem(resepTitle: String, resepDesc: String, resepTime: String, imag
 @Composable
 fun ResepListItemPreview() {
     ResepListItem(
+        idResep = "dsaasdsadda",
         resepTitle = "Ayam Goreng Krispi",
         resepDesc = "Ayam goreng dicampur dengan taburan krispi",
         resepTime = "60 menit",
-        imageUrl = ""
-        resepTime = "60 menit",
+        imageUrl = "",
         rememberNavController()
     )
 }

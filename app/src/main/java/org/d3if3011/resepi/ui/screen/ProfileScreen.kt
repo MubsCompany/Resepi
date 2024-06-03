@@ -75,7 +75,7 @@ fun ProfileTopAppBar(navController: NavHostController) {
 
 @Composable
 fun ProfileContent(modifier: Modifier, navController: NavHostController){
-    var listUser by remember { mutableStateOf<List<UserLogin>>(emptyList()) }
+    var listUser: List<UserLogin> by remember { mutableStateOf<List<UserLogin>>(emptyList()) }
     LaunchedEffect(Unit) {
         listUser = Profile()
     }

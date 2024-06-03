@@ -21,8 +21,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,19 +40,30 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.controller.DetailResep
+import org.d3if3011.resepi.model.ResepMasakan
 import org.d3if3011.resepi.ui.theme.ResepiTheme
 
+const val KEY_ID_RESEP = "idResep"
+
 @Composable
-fun DetailScreen(navController: NavHostController) {
+fun DetailScreen(navController: NavHostController, idResep: String) {
     Scaffold (
         topBar = { DetailTopBar(navController) }
     ) {paddingValues ->
-        DetailScreenContent(modifier = Modifier.padding(paddingValues))
+        DetailScreenContent(modifier = Modifier.padding(paddingValues), idResep)
     }
 }
 
 @Composable
-fun DetailScreenContent(modifier: Modifier = Modifier) {
+fun DetailScreenContent(modifier: Modifier = Modifier, idResep: String) {
+    var listDetailResep by remember {
+        mutableStateOf<List<ResepMasakan>>(emptyList())
+    }
+    LaunchedEffect(Unit){
+        listDetailResep = DetailResep(idResep)
+    }
+    listDetailResep.forEach {
     Column (
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -86,7 +99,7 @@ fun DetailScreenContent(modifier: Modifier = Modifier) {
                 )
                 Text(
                     modifier = Modifier.padding(start = 5.dp),
-                    text = stringResource(R.string._60_menit),
+                    text = it.waktu,
                     color = Color.DarkGray
                 )
             }
@@ -104,9 +117,13 @@ fun DetailScreenContent(modifier: Modifier = Modifier) {
                 fontSize = 20.sp,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
+            var noBahan:Int = 1
+            it.bahan_resep.forEach {
             Text(
-                text = "1. roti\n2. mayonais\n3. selada\n4. saus\n5. daging\n6. telur"
+                text = "$noBahan. $it\n"
             )
+                noBahan++
+            }
         }
 
         Column (
@@ -120,9 +137,13 @@ fun DetailScreenContent(modifier: Modifier = Modifier) {
                 fontSize = 20.sp,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            Text(
-                text = "1. roti\n2. mayonais\n3. selada\n4. saus\n5. daging\n6. telur"
+            var noAlatMasak:Int = 1
+            it.alat_resep.forEach {
+
+                Text(
+                text = "$noAlatMasak. $it\n"
             )
+            }
         }
 
         Column (
@@ -137,11 +158,15 @@ fun DetailScreenContent(modifier: Modifier = Modifier) {
                 fontSize = 20.sp,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
+            var noCaraMasak: Int = 1
+            it.caraMasak_resep.forEach {
             Text(
-                text = "1. roti\n2. mayonais\n3. selada\n4. saus\n5. daging\n6. telur"
+                text = "$noCaraMasak. $it\n"
             )
+            }
         }
 
+    }
     }
 }
 
@@ -192,6 +217,6 @@ fun DetailTopBar(navController: NavHostController) {
 @Composable
 fun DetailScreenPreview() {
     ResepiTheme {
-        DetailScreen(rememberNavController())
+        DetailScreen(rememberNavController(), "")
     }
 }

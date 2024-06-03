@@ -99,3 +99,23 @@ fun SearchResep(search: String, Tipe: Int):List<ResepMasakan>{
         emptyList() // Kembalikan daftar kosong jika terjadi kesalahan
     }
 }
+
+suspend fun DetailResep(uid: String): List<ResepMasakan> {
+    val firestore = FirebaseFirestore.getInstance()
+    val resepCollection = firestore.collection("resep")
+    return try {
+        val querySnapshot = resepCollection.get().await() // Menunggu hasil dari Firestore
+        var detailResep = mutableListOf<ResepMasakan>()
+        for (document in querySnapshot.documents){
+            val resep = document.toObject(ResepMasakan::class.java)
+            resep?.let {
+                detailResep.add(it)
+            }
+        }
+        detailResep
+    } catch (e: Exception) {
+        // Tangani kesalahan jika ada
+        Log.e("ERRORDATA", "${e.message}")
+        emptyList<ResepMasakan>()
+    }
+}

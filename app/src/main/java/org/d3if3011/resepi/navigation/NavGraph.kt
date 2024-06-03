@@ -47,8 +47,9 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         composable(route = Screen.SearchVegies.route) {
             SearchTopBar(navController,5)
         }
-        composable(route = Screen.DetailPage.route) {
-            DetailScreen(navController)
+        composable(route = Screen.DetailPage.route+"/{idResep}") {
+            val idResep = it.arguments?.getString("idResep")
+            DetailScreen(navController, idResep?:"")
         }
 //        composable()
     }
