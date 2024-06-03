@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
 import org.d3if3011.resepi.navigation.SetupNavGraph
+import org.d3if3011.resepi.ui.screen.BottomNavigationBar
 import org.d3if3011.resepi.ui.screen.LoginScreen
 import org.d3if3011.resepi.ui.theme.ResepiTheme
 
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SetupNavGraph()
+                   SetupNavGraph()
                 }
             }
         }

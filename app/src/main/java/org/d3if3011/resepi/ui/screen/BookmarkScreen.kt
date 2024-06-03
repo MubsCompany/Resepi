@@ -29,31 +29,34 @@ fun BookmarkScreen(modifier: Modifier) {
     LaunchedEffect(Unit){
         user = ambilDaftarResepBookmark()
     }
+
     var listBookmark by remember { mutableStateOf<List<ResepMasakan>>(emptyList()) }
     user.forEach {
         listBookmark = it.bookmarkResepMasakan
     }
+
     ResepiTheme {
         Surface(
             modifier = modifier,
             color = MaterialTheme.colorScheme.background
         ) {
             if (listBookmark.isNotEmpty()){
-                    listBookmark.forEach{
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(15.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        )  {
-                            Text(
-                                "ADA ISI",
-                                style = MaterialTheme.typography.titleLarge,
-                                modifier = Modifier.padding(vertical = 20.dp)
-                            )
-                        }
+                listBookmark.forEach{
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(15.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    )  {
+                        Text(
+                            "ADA ISI",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(vertical = 20.dp)
+                        )
                     }
+                }
+
             } else {
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally,

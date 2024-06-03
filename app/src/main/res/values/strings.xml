@@ -42,4 +42,8 @@
     <string name="logout">Keluar Akun</string>
     <string name="bookmark_kosong">Bookmark Kosong</string>
     <string name="resep_kosong">Resep Kosong</string>
+    <string name="_60_menit">60 menit</string>
+    <string name="bahan_masakan">Bahan Masakan</string>
+    <string name="alat_masak">Alat Masak</string>
+    <string name="cara_memasak">Cara Memasak</string>
 </resources>

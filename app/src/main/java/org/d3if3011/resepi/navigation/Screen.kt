@@ -12,4 +12,8 @@ sealed class Screen(val route: String) {
     data object SearchMeat: Screen("searchMeat")
     data object SearchFish: Screen("searchFish")
     data object SearchVegies: Screen("searchVegies")
+
+    data object BottomNavigationBar: Screen("bottomNavigationBar")
+
+    data object DetailPage: Screen("detailScreen")
 }
