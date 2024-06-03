@@ -1,6 +1,6 @@
 package org.d3if3011.resepi.model
 
-data class resep (
+data class ResepMasakan (
     var alat_resep: List<String>,
     var bahan_resep: List<String>,
     var caraMasak_resep:List<String>,

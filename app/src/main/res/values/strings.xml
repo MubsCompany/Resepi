@@ -40,4 +40,6 @@
     <string name="profile">foto profile</string>
     <string name="food">makanan</string>
     <string name="logout">Keluar Akun</string>
+    <string name="bookmark_kosong">Bookmark Kosong</string>
+    <string name="resep_kosong">Resep Kosong</string>
 </resources>
