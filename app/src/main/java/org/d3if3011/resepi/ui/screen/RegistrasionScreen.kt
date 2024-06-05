@@ -138,7 +138,7 @@ Column(
         modifier = Modifier.fillMaxWidth()
     )
     OutlinedTextField(
-        value = consError.toString(),
+        value = email,
         onValueChange = { email = it },
         label = { Text(text = stringResource(R.string.email)) },
         trailingIcon = { if (emailError) Icon(imageVector = Icons.Filled.Warning, contentDescription = null) },

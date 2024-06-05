@@ -46,6 +46,7 @@ private fun saveUserData(userId: String, email: String, namaLengkap: String, pas
         "nama_lengkap" to namaLengkap,
         "password" to password,
         "uid" to userId,
+        "imageUrl" to "",
         "bookmarkResep" to listOf<Any?>(null)
     )
     // Add a new document with a generated ID
