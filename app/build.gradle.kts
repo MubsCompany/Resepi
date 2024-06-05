@@ -86,7 +86,6 @@ dependencies {
     implementation ("com.google.firebase:firebase-storage-ktx:20.0.0")
     implementation ("com.google.firebase:firebase-core:20.0.0")
 
-
     //Cropper Dependency
     implementation("com.vanniktech:android-image-cropper:4.5.0")
 }

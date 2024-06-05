@@ -1,5 +1,12 @@
 package org.d3if3011.resepi.ui.screen
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -47,8 +54,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,8 +68,12 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.controller.Profile
 import org.d3if3011.resepi.controller.ambilDaftarResepDariFirestore
+import org.d3if3011.resepi.controller.getImageBitmapFromFirebaseStorage
+import org.d3if3011.resepi.controller.uploadImageToFirebaseStorage
 import org.d3if3011.resepi.model.ResepMasakan
+import org.d3if3011.resepi.model.UserLogin
 import org.d3if3011.resepi.navigation.BottomNavigationItem
 import org.d3if3011.resepi.navigation.Screen
 
@@ -122,7 +135,21 @@ fun HomeTopBar (navController: NavHostController) {
     var searchText by remember {
         mutableStateOf("")
     }
-
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+    var bitmap = remember { mutableStateOf<Bitmap?>(null) }
+    LaunchedEffect(Unit) {
+        bitmap.value = getImageBitmapFromFirebaseStorage()
+    }
+    imageUri?.let {
+        if (Build.VERSION.SDK_INT < 28){
+            bitmap.value = MediaStore.Images
+                .Media.getBitmap(context.contentResolver, it)
+        } else {
+            val source = ImageDecoder.createSource(context.contentResolver, it)
+            bitmap.value = ImageDecoder.decodeBitmap(source)
+        }
+    }
     TopAppBar(
         title = { Text("") },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -166,17 +193,20 @@ fun HomeTopBar (navController: NavHostController) {
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Image(
-                    painter = painterResource(id = R.drawable.img_hamburger),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(50.dp)
+                bitmap.value?.let {
+                        btm ->
+                    Image(
+                        bitmap = btm.asImageBitmap(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(50.dp)
 //                        .padding(20.dp)
-                        .clip(CircleShape)
-                        .clickable { navController.navigate(Screen.ProfilePage.route) }
+                            .clip(CircleShape)
+                            .clickable { navController.navigate(Screen.ProfilePage.route) }
 //                        .border(3.dp, Color.Red, CircleShape)
-                )
+                    )
+                }
             }
         },
     )

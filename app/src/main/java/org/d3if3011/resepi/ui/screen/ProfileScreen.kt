@@ -3,10 +3,12 @@ package org.d3if3011.resepi.ui.screen
 import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -42,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -63,8 +67,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import org.d3if3011.resepi.R
 import org.d3if3011.resepi.controller.Profile
+import org.d3if3011.resepi.controller.getImageBitmapFromFirebaseStorage
 import org.d3if3011.resepi.controller.id_user
 import org.d3if3011.resepi.controller.signOut
+import org.d3if3011.resepi.controller.uploadImageToFirebaseStorage
 import org.d3if3011.resepi.model.UserLogin
 import org.d3if3011.resepi.navigation.Screen
 import java.io.ByteArrayOutputStream
@@ -76,7 +82,7 @@ fun ProfileTopAppBar(navController: NavHostController) {
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { navController.navigate(Screen.HomePage.route) }) {
                         Icon(imageVector = Icons.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.kembali),
                             tint = Color.Black
@@ -99,9 +105,28 @@ fun ProfileTopAppBar(navController: NavHostController) {
 
 @Composable
 fun ProfileContent(modifier: Modifier, navController: NavHostController){
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+    var bitmap = remember { mutableStateOf<Bitmap?>(null) }
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){
+            uri: Uri? ->
+        imageUri = uri
+        // Setelah gambar dipilih, panggil fungsi untuk mengirimkan ke Firebase Storage
+        uploadImageToFirebaseStorage(uri)
+    }
     var listUser: List<UserLogin> by remember { mutableStateOf<List<UserLogin>>(emptyList()) }
     LaunchedEffect(Unit) {
         listUser = Profile()
+        bitmap.value = getImageBitmapFromFirebaseStorage()
+    }
+    imageUri?.let {
+        if (Build.VERSION.SDK_INT < 28){
+            bitmap.value = MediaStore.Images
+                .Media.getBitmap(context.contentResolver, it)
+        } else {
+            val source = ImageDecoder.createSource(context.contentResolver, it)
+            bitmap.value = ImageDecoder.decodeBitmap(source)
+        }
     }
     Column (
         modifier = modifier
@@ -111,14 +136,38 @@ fun ProfileContent(modifier: Modifier, navController: NavHostController){
         Row (
             verticalAlignment = Alignment.CenterVertically
         ){
-            Image(
-                painter = painterResource(id = R.drawable.baseline_account_circle_24),
-                contentDescription = stringResource(id = R.string.profile_desc),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(123.dp)
-                    .clip(CircleShape)
-            )
+            IconButton(
+                onClick = {
+                    //AMBIL GAMBAR DARI GALERI
+                    launcher.launch("image/*")
+                },
+                modifier = Modifier.size(123.dp)
+            ) {
+                listUser.forEach {
+                    if(it.imageUrl.equals("")){
+                        Image(
+                            imageVector = Icons.Default.Face,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(123.dp)
+                                .clip(CircleShape))
+                    } else {
+                        //Tampilkan gambar dari firebase storage
+                        bitmap.value?.let {
+                                btm ->
+                            Image(
+                                bitmap = btm.asImageBitmap(),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(123.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
+                    }
+                }
+            }
             listUser.forEach{
                 Column (
                     modifier = Modifier.padding(start = 12.dp),
@@ -135,7 +184,7 @@ fun ProfileContent(modifier: Modifier, navController: NavHostController){
             Button(
                 onClick = { signOut(navController) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White
+                    containerColor = Color.Transparent
                 )
             ) {
                 Image(
