@@ -146,7 +146,7 @@ fun ProfileContent(modifier: Modifier, navController: NavHostController){
                 listUser.forEach {
                     if(it.imageUrl.equals("")){
                         Image(
-                            imageVector = Icons.Default.Face,
+                            painter = painterResource(id = R.drawable.baseline_account_circle_24),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier

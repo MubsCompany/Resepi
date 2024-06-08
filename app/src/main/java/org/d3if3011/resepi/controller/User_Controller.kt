@@ -7,17 +7,22 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.navigation.NavHostController
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
+import org.d3if3011.resepi.model.ResepMasakan
 import org.d3if3011.resepi.model.UserLogin
 import org.d3if3011.resepi.navigation.Screen
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 
 object id_user {
     lateinit var id_user: String
@@ -54,7 +59,7 @@ private fun saveUserData(userId: String, email: String, namaLengkap: String, pas
         "password" to password,
         "uid" to userId,
         "imageUrl" to "",
-        "bookmarkResep" to listOf<Any?>(null)
+        "bookmarkResep" to emptyList<Any?>()
     )
     // Add a new document with a generated ID
     db.collection("users")
@@ -144,7 +149,9 @@ public suspend fun getImageBitmapFromFirebaseStorage(): Bitmap? {
     }
     var imageUrl: String = ""
     userList.forEach {
+        if (it.imageUrl != "")
         imageUrl = it.imageUrl
+        else return null
     }
     // Get a reference to the Firebase Storage instance
     val storage = Firebase.storage
@@ -161,6 +168,25 @@ public suspend fun getImageBitmapFromFirebaseStorage(): Bitmap? {
     } catch (e: Exception) {
         e.printStackTrace()
         null
+    }
+}
+suspend fun ambilDaftarResepBookmark():List<UserLogin>{
+    var id_user = GetUserId()
+    val firestore = FirebaseFirestore.getInstance()
+    val userCollection = firestore.collection("users")
+    return try{
+        val querySnapshot = userCollection.whereEqualTo("uid", id_user).get().await()
+        val userList = mutableListOf<UserLogin>()
+
+        for (document in querySnapshot.documents){
+            val user = document.toObject(UserLogin::class.java)
+            user?.let {
+                userList.add(it)
+            }
+        }
+        userList
+    } catch (e: Exception){
+        emptyList()
     }
 }
 fun GetUserId(): String{

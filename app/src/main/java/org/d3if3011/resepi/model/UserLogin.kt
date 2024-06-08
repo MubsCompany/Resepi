@@ -6,5 +6,5 @@ class UserLogin(
     var nama_lengkap: String = "",
     var email: String = "",
     var imageUrl: String = "",
-    var bookmarkResepMasakan: List<ResepMasakan> = listOf()
+    var bookmarkResep: List<ResepMasakan> = listOf()
 )

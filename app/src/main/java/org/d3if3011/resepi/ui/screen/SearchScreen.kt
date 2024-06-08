@@ -1,5 +1,6 @@
 package org.d3if3011.resepi.ui.screen
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -27,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -50,6 +54,7 @@ import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
 import org.d3if3011.resepi.controller.SearchResep
 import org.d3if3011.resepi.controller.ambilResepSearch
+import org.d3if3011.resepi.controller.downloadImageFromFirebase
 import org.d3if3011.resepi.model.ResepMasakan
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,7 +96,7 @@ fun SearchTopBar(navController: NavHostController, tipe: Int) {
 fun SearchContent(modifier: Modifier, tipe: Int){
     var listResep by remember { mutableStateOf<List<ResepMasakan>>(emptyList()) }
     LaunchedEffect(Unit){
-        ambilResepSearch(tipe)
+        listResep = ambilResepSearch(tipe)
     }
     val roundSize = 30
     var searchText by remember {
@@ -130,7 +135,7 @@ Column (
             }
         },
         )
-    if (listResep.isNotEmpty()){
+    if (!listResep.isEmpty()){
     listResep.forEach {
     Column (
         modifier = Modifier
@@ -171,13 +176,7 @@ Column (
                 }
 
             }
-            Image(
-                painter = painterResource(id = R.drawable.example_chicken),
-                contentDescription = stringResource(id = R.string.food),
-                modifier = Modifier
-                    .size(124.dp)
-                    .clip(shape = RoundedCornerShape(12.dp))
-            )
+            LoadImageFromBitmapSearch(it.gambar)
         }
         Divider(modifier = Modifier.padding(top = 24.dp))
     }
@@ -194,6 +193,27 @@ Column (
             }
             Divider(modifier = Modifier.padding(top = 24.dp))
         }
+    }
+}
+
+@Composable
+fun LoadImageFromBitmapSearch(imagePath: String){
+    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    // Memanggil downloadImageFromFirebase ketika komposisi pertama kali diload
+    DisposableEffect(imagePath) {
+        downloadImageFromFirebase(imagePath) { fetchedBitmap ->
+            bitmap = fetchedBitmap
+        }
+        onDispose {  }
+    }
+    if (bitmap != null) {
+        Image(
+            modifier = Modifier.size(100.dp),  // Ukuran kotak 100x100 dp
+            contentScale = ContentScale.Crop,  // Atur menjadi Crop untuk mengisi kotak
+            bitmap = bitmap!!.asImageBitmap(),
+            contentDescription = stringResource(id = R.string.gambar_makanan))
+    } else {
+
     }
 }
 

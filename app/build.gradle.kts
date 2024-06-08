@@ -88,4 +88,8 @@ dependencies {
 
     //Cropper Dependency
     implementation("com.vanniktech:android-image-cropper:4.5.0")
+
+    //Coroutine
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+
 }
