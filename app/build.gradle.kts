@@ -83,4 +83,13 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation ("com.google.firebase:firebase-auth-ktx:21.0.0")
     implementation ("com.google.firebase:firebase-firestore-ktx:23.0.3")
+    implementation ("com.google.firebase:firebase-storage-ktx:20.0.0")
+    implementation ("com.google.firebase:firebase-core:20.0.0")
+
+    //Cropper Dependency
+    implementation("com.vanniktech:android-image-cropper:4.5.0")
+
+    //Coroutine
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+
 }

@@ -1,5 +1,12 @@
 package org.d3if3011.resepi.ui.screen
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -37,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,8 +55,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,8 +69,13 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
+import org.d3if3011.resepi.controller.Profile
 import org.d3if3011.resepi.controller.ambilDaftarResepDariFirestore
+import org.d3if3011.resepi.controller.downloadImageFromFirebase
+import org.d3if3011.resepi.controller.getImageBitmapFromFirebaseStorage
+import org.d3if3011.resepi.controller.uploadImageToFirebaseStorage
 import org.d3if3011.resepi.model.ResepMasakan
+import org.d3if3011.resepi.model.UserLogin
 import org.d3if3011.resepi.navigation.BottomNavigationItem
 import org.d3if3011.resepi.navigation.Screen
 
@@ -112,7 +127,7 @@ fun HomeScreen(navController: NavHostController) {
         if (navigationSelectedItem == 0)
         HomeScreenContent(modifier = Modifier.padding(paddingValues), navController, daftarResepMasakan)
         else
-            BookmarkScreen(modifier = Modifier.padding(paddingValues))
+            BookmarkScreen(modifier = Modifier.padding(paddingValues), navController)
     }
 }
 
@@ -122,7 +137,21 @@ fun HomeTopBar (navController: NavHostController) {
     var searchText by remember {
         mutableStateOf("")
     }
-
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+    var bitmap = remember { mutableStateOf<Bitmap?>(null) }
+    LaunchedEffect(Unit) {
+        bitmap.value = getImageBitmapFromFirebaseStorage()
+    }
+    imageUri?.let {
+        if (Build.VERSION.SDK_INT < 28){
+            bitmap.value = MediaStore.Images
+                .Media.getBitmap(context.contentResolver, it)
+        } else {
+            val source = ImageDecoder.createSource(context.contentResolver, it)
+            bitmap.value = ImageDecoder.decodeBitmap(source)
+        }
+    }
     TopAppBar(
         title = { Text("") },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -165,18 +194,33 @@ fun HomeTopBar (navController: NavHostController) {
 
 
                 Spacer(modifier = Modifier.width(8.dp))
-
-                Image(
-                    painter = painterResource(id = R.drawable.img_hamburger),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(50.dp)
-//                        .padding(20.dp)
-                        .clip(CircleShape)
-                        .clickable { navController.navigate(Screen.ProfilePage.route) }
-//                        .border(3.dp, Color.Red, CircleShape)
-                )
+                if(bitmap.value == null){
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_account_circle_24),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(50.dp)
+                            //                        .padding(20.dp)
+                            .clip(CircleShape)
+                            .clickable { navController.navigate(Screen.ProfilePage.route) }
+                    )
+                } else {
+                    bitmap.value?.let {
+                            btm ->
+                        Image(
+                            bitmap = btm.asImageBitmap(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(50.dp)
+                                //                        .padding(20.dp)
+                                .clip(CircleShape)
+                                .clickable { navController.navigate(Screen.ProfilePage.route) }
+    //                        .border(3.dp, Color.Red, CircleShape)
+                        )
+                    }
+                }
             }
         },
     )
@@ -257,7 +301,21 @@ fun HomeScreenContent(modifier: Modifier = Modifier, navController: NavHostContr
                 color = Color(0xFFFF7A00)
             )
         }
+        var maxResep = 1
         resepMasakanList.forEach{
+            if (resepMasakanList.size >= 3){
+                if (maxResep <= 3){
+                    ResepListItem(
+                        idResep = it.uid,
+                        resepTitle = it.nama_resep,
+                        resepDesc = it.deskripsi_resep,
+                        resepTime = it.waktu,
+                        imageUrl = it.gambar,
+                        navController
+                    )
+                    maxResep++
+                }
+            } else {
                 ResepListItem(
                     idResep = it.uid,
                     resepTitle = it.nama_resep,
@@ -266,6 +324,7 @@ fun HomeScreenContent(modifier: Modifier = Modifier, navController: NavHostContr
                     imageUrl = it.gambar,
                     navController
                 )
+            }
         }
     }
 
@@ -363,19 +422,34 @@ fun ResepListItem(idResep: String,resepTitle: String, resepDesc: String, resepTi
                 }
             }
 
-            Image(
-                modifier = Modifier
-                    .weight(0.4f),
-                painter = painterResource(id = R.drawable.ic_ayam),
-                contentDescription = stringResource(R.string.gambar_makanan),
-            )
+            LoadImageFromBitmap(imagePath = imageUrl)
         }
         Divider(
             modifier = Modifier.padding(horizontal = 20.dp)
         )
     }
 }
+@Composable
+fun LoadImageFromBitmap(imagePath: String){
+    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    // Memanggil downloadImageFromFirebase ketika komposisi pertama kali diload
+    DisposableEffect(imagePath) {
+        downloadImageFromFirebase(imagePath) { fetchedBitmap ->
+            bitmap = fetchedBitmap
+        }
+        onDispose {  }
+    }
+    if (bitmap != null) {
+        Image(
+            bitmap = bitmap!!.asImageBitmap(),
+            contentDescription = stringResource(id = R.string.gambar_makanan),
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.size(100.dp),
+        )
+    } else {
 
+    }
+}
 
 //@Preview
 @Composable

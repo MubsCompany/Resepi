@@ -1,5 +1,6 @@
 package org.d3if3011.resepi.ui.screen
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -8,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,6 +42,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if3011.resepi.R
 import org.d3if3011.resepi.controller.DetailResep
+import org.d3if3011.resepi.controller.addBookmark
+import org.d3if3011.resepi.controller.bookmarkChecker
+import org.d3if3011.resepi.controller.deleteBookmark
+import org.d3if3011.resepi.controller.downloadImageFromFirebase
 import org.d3if3011.resepi.model.ResepMasakan
 import org.d3if3011.resepi.ui.theme.ResepiTheme
 
@@ -48,35 +53,27 @@ const val KEY_ID_RESEP = "idResep"
 
 @Composable
 fun DetailScreen(navController: NavHostController, idResep: String) {
-    Scaffold (
-        topBar = { DetailTopBar(navController) }
-    ) {paddingValues ->
-        DetailScreenContent(modifier = Modifier.padding(paddingValues), idResep)
-    }
-}
-
-@Composable
-fun DetailScreenContent(modifier: Modifier = Modifier, idResep: String) {
     var listDetailResep by remember {
         mutableStateOf<List<ResepMasakan>>(emptyList())
     }
     LaunchedEffect(Unit){
         listDetailResep = DetailResep(idResep)
     }
+    Scaffold (
+        topBar = { DetailTopBar(listDetailResep, navController) }
+    ) {paddingValues ->
+        DetailScreenContent(listDetailResep, modifier = Modifier.padding(paddingValues), idResep)
+    }
+}
+
+@Composable
+fun DetailScreenContent(listDetailResep: List<ResepMasakan>,modifier: Modifier = Modifier, idResep: String) {
+
     listDetailResep.forEach {
     Column (
         modifier = modifier
-            .verticalScroll(rememberScrollState())
     ) {
-
-        Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp),
-            contentScale = ContentScale.Crop,
-            painter = painterResource(id = R.drawable.img_hamburger),
-            contentDescription = stringResource(id = R.string.gambar_makanan),
-        )
+        LoadImageFromBitmapDetailResep(imagePath = it.gambar)
 
         Column (
             modifier = Modifier
@@ -159,7 +156,7 @@ fun DetailScreenContent(modifier: Modifier = Modifier, idResep: String) {
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             var noCaraMasak: Int = 1
-            it.caraMasak_resep.forEach {
+            it.cara_masak.forEach {
             Text(
                 text = "$noCaraMasak. $it\n"
             )
@@ -172,15 +169,56 @@ fun DetailScreenContent(modifier: Modifier = Modifier, idResep: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailTopBar(navController: NavHostController) {
-
+fun DetailTopBar(listDetailResep: List<ResepMasakan>, navController: NavHostController) {
+    var kondisiBookmark by remember {
+        mutableStateOf(false)
+    }
     var iconBookmark by remember {
-        mutableIntStateOf(R.drawable.ic_bookmark)
+        mutableIntStateOf(0)
+    }
+    listDetailResep.forEach {
+        LaunchedEffect(Unit){
+            kondisiBookmark = bookmarkChecker(
+                ResepMasakan(
+                    alat_resep = it.alat_resep,
+                    bahan_resep = it.bahan_resep,
+                    cara_masak = it.cara_masak,
+                    deskripsi_resep = it.deskripsi_resep,
+                    gambar = it.gambar,
+                    nama_resep = it.nama_resep,
+                    kategori = it.kategori,
+                    uid = it.uid,
+                    waktu = it.waktu,
+                )
+            )
+        }
+    }
+    iconBookmark =
+        if (kondisiBookmark){
+            R.drawable.ic_detail_bookmark_terisi
+        } else {
+            R.drawable.ic_bookmark
+        }
+    var namaResep = ""
+    var resepMasakan = ResepMasakan()
+    listDetailResep.forEach {
+        namaResep = it.nama_resep
+        resepMasakan = ResepMasakan(
+            alat_resep = it.alat_resep,
+            bahan_resep = it.bahan_resep,
+            cara_masak = it.cara_masak,
+            deskripsi_resep = it.deskripsi_resep,
+            gambar = it.gambar,
+            nama_resep = it.nama_resep,
+            kategori = it.kategori,
+            uid = it.uid,
+            waktu = it.waktu,
+        )
     }
 
     TopAppBar(
         title = { 
-                Text(text = "Burger vegetarian")
+                Text(text = namaResep)
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.White,
@@ -197,10 +235,13 @@ fun DetailTopBar(navController: NavHostController) {
         actions = {
             IconButton(
                 onClick = {
-                    iconBookmark = if (iconBookmark==R.drawable.ic_bookmark)
-                        R.drawable.ic_detail_bookmark_terisi
-                    else
-                        R.drawable.ic_bookmark
+                    if (kondisiBookmark){
+                        deleteBookmark(resepMasakan)
+                        kondisiBookmark = false
+                    } else {
+                        addBookmark(resepMasakan)
+                        kondisiBookmark = true
+                    }
                 }
             ) {
                 Icon(
@@ -212,7 +253,28 @@ fun DetailTopBar(navController: NavHostController) {
         }
     )
 }
+@Composable
+fun LoadImageFromBitmapDetailResep(imagePath: String){
+    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    // Memanggil downloadImageFromFirebase ketika komposisi pertama kali diload
+    DisposableEffect(imagePath) {
+        downloadImageFromFirebase(imagePath) { fetchedBitmap ->
+            bitmap = fetchedBitmap
+        }
+        onDispose {  }
+    }
+    if (bitmap != null) {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp),
+            contentScale = ContentScale.Crop,
+            bitmap = bitmap!!.asImageBitmap(),
+            contentDescription = stringResource(id = R.string.gambar_makanan))
+    } else {
 
+    }
+}
 @Preview
 @Composable
 fun DetailScreenPreview() {
