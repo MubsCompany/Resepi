@@ -45,74 +45,76 @@ fun BookmarkScreen(modifier: Modifier, navController: NavHostController) {
             modifier = modifier,
             color = MaterialTheme.colorScheme.background
         ) {
-            if (user.isNotEmpty()){
-                user.forEach{
-                    it.bookmarkResep.forEach {
-                        Column (
-                            modifier = Modifier.clickable {
-                                navController.navigate(Screen.DetailPage.route +"/"+ it.uid)
-                            }
-                        ){
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(20.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-
-                                Column(
-                                    horizontalAlignment = Alignment.Start,
-                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+            Column {
+                if (user.isNotEmpty()){
+                    user.forEach{
+                        it.bookmarkResep.forEach {
+                            Column (
+                                modifier = Modifier.clickable {
+                                    navController.navigate(Screen.DetailPage.route +"/"+ it.uid)
+                                }
+                            ){
+                                Row(
                                     modifier = Modifier
-                                        .padding(end = 10.dp)
-                                        .weight(1.0f)
+                                        .fillMaxWidth()
+                                        .padding(20.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(
-                                        text = it.nama_resep,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 16.sp
-                                    )
 
-                                    Text(
-                                        text = it.deskripsi_resep,
-                                        color = Color.DarkGray
-                                    )
-
-                                    Row (
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ){
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.clock),
-                                            contentDescription = stringResource(R.string.waktu_memasak),
-                                        )
+                                    Column(
+                                        horizontalAlignment = Alignment.Start,
+                                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier
+                                            .padding(end = 10.dp)
+                                            .weight(1.0f)
+                                    ) {
                                         Text(
-                                            modifier = Modifier.padding(start = 5.dp),
-                                            text = it.waktu,
+                                            text = it.nama_resep,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 16.sp
+                                        )
+
+                                        Text(
+                                            text = it.deskripsi_resep,
                                             color = Color.DarkGray
                                         )
-                                    }
-                                }
 
-                                LoadImageFromBitmap(it.gambar)
+                                        Row (
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ){
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.clock),
+                                                contentDescription = stringResource(R.string.waktu_memasak),
+                                            )
+                                            Text(
+                                                modifier = Modifier.padding(start = 5.dp),
+                                                text = it.waktu,
+                                                color = Color.DarkGray
+                                            )
+                                        }
+                                    }
+
+                                    LoadImageFromBitmap(it.gambar)
+                                }
+                                Divider(
+                                    modifier = Modifier.padding(horizontal = 20.dp)
+                                )
                             }
-                            Divider(
-                                modifier = Modifier.padding(horizontal = 20.dp)
-                            )
                         }
                     }
-                }
 
-            } else {
-                Column (
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ){
-                    Text(
-                        stringResource(id = R.string.bookmark_kosong),
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(vertical = 20.dp)
-                    )
+                } else {
+                    Column (
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ){
+                        Text(
+                            stringResource(id = R.string.bookmark_kosong),
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(vertical = 20.dp)
+                        )
+                    }
                 }
             }
         }
