@@ -253,7 +253,7 @@ fun HomeScreenContent(modifier: Modifier = Modifier, navController: NavHostContr
             containerColor = Color(0xFFFFC6C2),
             categoryTitleRes = R.string.daging,
             categoryTextRes = R.string.resep_berbahan_daging,
-            iconRes = painterResource(id = R.drawable.ic_ayam),
+            iconRes = painterResource(id = R.drawable.ic_daging),
             navController,
             3
         )
